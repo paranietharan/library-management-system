@@ -2,6 +2,7 @@ package com.alphacodes.librarymanagementsystem.Model;
 
 import jakarta.persistence.*;
 
+@Entity
 public class ArticleRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
