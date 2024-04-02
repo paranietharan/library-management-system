@@ -12,6 +12,6 @@ public class ArticleRating {
     Article article;
     @ManyToOne
     @JoinColumn(name = "member", nullable = false)
-    Member commenter;
+    User commenter;
     float rating;
 }

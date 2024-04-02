@@ -10,7 +10,7 @@ public class ReservationManagement {
 
     @ManyToOne
     @JoinColumn(name = "remlID")
-    private Librarian librarian;
+    private User librarian;
 
     private String status;
 }

@@ -11,7 +11,7 @@ public class Complaint {
 
     @ManyToOne
     @JoinColumn(name = "cmID")
-    private Member member;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "clID")

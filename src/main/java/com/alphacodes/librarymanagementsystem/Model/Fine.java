@@ -10,7 +10,7 @@ public class Fine {
 
     @ManyToOne
     @JoinColumn(name = "flID")
-    private Librarian librarian;
+    private User librarian;
 
     private double amount;
     private String status;

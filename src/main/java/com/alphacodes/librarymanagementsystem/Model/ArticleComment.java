@@ -13,6 +13,6 @@ public class ArticleComment {
     Article article;
     @ManyToOne
     @JoinColumn(name = "member", nullable = false)
-    Member commenter;
+    User commenter;
     String comment;
 }

@@ -10,7 +10,7 @@ public class ResourceManagement {
 
     @ManyToOne
     @JoinColumn(name = "rmlID")
-    private Librarian librarian;
+    private User librarian;
 
     private String caption;
 }

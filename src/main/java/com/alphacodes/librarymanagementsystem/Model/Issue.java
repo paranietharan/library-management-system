@@ -15,7 +15,7 @@ public class Issue {
 
     @ManyToOne
     @JoinColumn(name = "ilID")
-    private Librarian librarian;
+    private User librarian;
 
     private Date date;
 }

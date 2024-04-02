@@ -9,7 +9,7 @@ public class AccountManagement {
 
     @ManyToOne
     @JoinColumn(name = "acmlID")
-    private Librarian librarian;
+    private User librarian;
 
     private String caption;
 }

@@ -15,5 +15,5 @@ public class Article {
     private Date dateCreated;
     @ManyToOne
     @JoinColumn(name = "members", nullable = false)
-    Member author;
+    User author;
 }

@@ -10,7 +10,7 @@ public class ArticleManagement {
 
     @ManyToOne
     @JoinColumn(name = "amlID")
-    private Librarian librarian;
+    private User librarian;
 
     private String caption;
 }
