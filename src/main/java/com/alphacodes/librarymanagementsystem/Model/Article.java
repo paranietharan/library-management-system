@@ -5,7 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+
+
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -20,7 +25,15 @@ public class Article {
     String title;
     String body;
     private Date dateCreated;
+
     @ManyToOne
     @JoinColumn(name = "members", nullable = false)
-    User author;
+    private User author;
+
+    @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ArticleComment> comments = new HashSet<>();
+
+    @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ArticleRating> ratings = new HashSet<>();
+
 }

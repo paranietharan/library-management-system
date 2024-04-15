@@ -16,10 +16,10 @@ public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cmID;
-
-
     private String chatMsg;
     private Date time;
     private Date date;
+
+
 }
 

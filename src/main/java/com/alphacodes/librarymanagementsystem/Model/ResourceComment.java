@@ -13,7 +13,16 @@ public class ResourceComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rcmID;
-
     private String comment;
+
+    @ManyToOne
+    @JoinColumn(name = "member", nullable = false)
+    private User member;
+
+    @ManyToOne
+    @JoinColumn(name = "book", nullable = false)
+    private Resource book;
+
+
 }
 

@@ -16,6 +16,9 @@ public class Complaint {
     private Long cID;
     private String complaint;
 
+    @ManyToOne
+    @JoinColumn(name = "member", nullable = false)
+    private User member;
 
 }
 

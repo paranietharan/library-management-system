@@ -14,8 +14,16 @@ public class ResourceRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long armID;
+    private float rating;
+
+    @ManyToOne
+    @JoinColumn(name = "member", nullable = false)
+    private User member;
+
+    @ManyToOne
+    @JoinColumn(name = "book", nullable = false)
+    private Resource book;
 
 
-    private int rating;
 }
 

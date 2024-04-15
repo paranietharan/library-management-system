@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +16,15 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reID;
+    private String status;
 
+    @ManyToOne
+    @JoinColumn(name = "member", nullable = false)
+    private User member;
+
+    @ManyToOne
+    @JoinColumn(name = "book", nullable = false)
+    private Resource book;
 
 }
 

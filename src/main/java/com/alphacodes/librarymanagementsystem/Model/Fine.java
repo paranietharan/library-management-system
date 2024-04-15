@@ -14,12 +14,15 @@ public class Fine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fmID;
-
-    @ManyToOne
-    @JoinColumn(name = "flID")
-    private User librarian;
-
     private double amount;
     private String status;
+
+    @ManyToOne
+    @JoinColumn(name = "member", nullable = false)
+    private User member;
+
+    @ManyToOne
+    @JoinColumn(name = "librarian", nullable = false)
+    private User librarian;
 }
 
