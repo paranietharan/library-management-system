@@ -25,5 +25,6 @@ public class ResourceRating {
     private Resource book;
 
 
+
 }
 
