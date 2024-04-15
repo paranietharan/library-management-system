@@ -1,7 +1,15 @@
 package com.alphacodes.librarymanagementsystem.Model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 
 @Entity
 public class Issue {
@@ -9,13 +17,7 @@ public class Issue {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long imID;
 
-    @ManyToOne
-    @JoinColumn(name = "irID")
-    private Resource resource;
 
-    @ManyToOne
-    @JoinColumn(name = "ilID")
-    private User librarian;
 
     private Date date;
 }

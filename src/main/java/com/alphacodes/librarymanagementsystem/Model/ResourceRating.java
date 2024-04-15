@@ -1,6 +1,13 @@
 package com.alphacodes.librarymanagementsystem.Model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 
 @Entity
 public class ResourceRating {
@@ -8,9 +15,6 @@ public class ResourceRating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long armID;
 
-    @ManyToOne
-    @JoinColumn(name = "arrID")
-    private Resource resource;
 
     private int rating;
 }

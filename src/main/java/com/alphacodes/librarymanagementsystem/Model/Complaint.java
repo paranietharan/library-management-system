@@ -1,6 +1,13 @@
 package com.alphacodes.librarymanagementsystem.Model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 
 @Entity
 public class Complaint {
@@ -9,12 +16,6 @@ public class Complaint {
     private Long cID;
     private String complaint;
 
-    @ManyToOne
-    @JoinColumn(name = "cmID")
-    private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "clID")
-    private Chat chat;
 }
 

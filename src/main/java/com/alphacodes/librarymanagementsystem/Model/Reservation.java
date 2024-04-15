@@ -1,6 +1,13 @@
 package com.alphacodes.librarymanagementsystem.Model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 
 @Entity
 public class Reservation {
@@ -8,12 +15,6 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reID;
 
-    @ManyToOne
-    @JoinColumn(name = "rmID")
-    private Resource resource;
 
-    @ManyToOne
-    @JoinColumn(name = "rrID")
-    private Resource reservationResource;
 }
 

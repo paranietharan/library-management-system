@@ -17,7 +17,8 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder; // Autowire BCryptPasswordEncoder
-@Autowired
+
+    @Autowired
     private JWTauthentication jwtA;
 
     public LoginResponse performlogin(String userEmailAddress, String password) {
