@@ -19,7 +19,7 @@ public class Resource {
     private Long rID;
     private String title;
     private String author;
-    private boolean availability;
+    private Integer availability;
     private String category;
 
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
