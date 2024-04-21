@@ -17,7 +17,7 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int memberID;
+    int userID;
     String firstName;
     String lastName;
     String phoneNumber;
@@ -66,4 +66,6 @@ public class User {
     public User orElse(Object o) {
         return null;
     }
+
+
 }

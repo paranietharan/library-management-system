@@ -4,6 +4,7 @@ import com.alphacodes.librarymanagementsystem.DTO.ResourceCommentDto;
 import com.alphacodes.librarymanagementsystem.Model.ResourceComment;
 import com.alphacodes.librarymanagementsystem.repository.ResourceCommentRepository;
 import com.alphacodes.librarymanagementsystem.repository.ResourceRepository;
+import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.ResourceCommentService;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +16,19 @@ public class ResourceCommentServiceImpl implements ResourceCommentService{
 
     private final ResourceCommentRepository resourceCommentRepository;
     private final ResourceRepository resourceRepository;
-    public ResourceCommentServiceImpl(ResourceCommentRepository resourceCommentRepository, ResourceRepository resourceRepository) {
+    private final UserRepository userRepository;
+    public ResourceCommentServiceImpl(ResourceCommentRepository resourceCommentRepository, ResourceRepository resourceRepository, UserRepository userRepository) {
         this.resourceCommentRepository = resourceCommentRepository;
         this.resourceRepository = resourceRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public ResourceCommentDto addResourceComment(long rID, ResourceCommentDto resourceCommentDto) {
+    public ResourceCommentDto addResourceComment(int userID,Long rID, ResourceCommentDto resourceCommentDto) {
         ResourceComment resourceComment1 = convertToResourceComment(resourceCommentDto);
         resourceComment1.setBook(resourceRepository.findById(rID).orElseThrow(
                 () -> new RuntimeException("Resource not found with id " + rID)));
+        resourceComment1.setMember(userRepository.findByUserID(userID).orElse(null));
 
         ResourceComment newResourceComment = resourceCommentRepository.save(resourceComment1);
         return convertToResourceCommentDto(newResourceComment);

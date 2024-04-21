@@ -10,6 +10,7 @@ import java.util.List;
 
 
 @RestController
+@RequestMapping("/user/{userID}/resource")
 public class ResourceCommentController {
     private final ResourceCommentService resourceCommentService;
 
@@ -18,26 +19,26 @@ public class ResourceCommentController {
     }
 
     // Add a new comment to a resource
-    @PostMapping("/resource/{rID}/comment")
-    public ResponseEntity<ResourceCommentDto> addResourceComment(@PathVariable long rID, @RequestBody ResourceCommentDto resourceCommentDto) {
-        return new ResponseEntity<>(resourceCommentService.addResourceComment(rID, resourceCommentDto), HttpStatus.CREATED);
+    @PostMapping("/{rID}/comment")
+    public ResponseEntity<ResourceCommentDto> addResourceComment(@PathVariable int userID,@PathVariable Long rID, @RequestBody ResourceCommentDto resourceCommentDto) {
+        return new ResponseEntity<>(resourceCommentService.addResourceComment(userID, rID, resourceCommentDto), HttpStatus.CREATED);
     }
 
     // Get all comments for a resource
-    @GetMapping("/resource/{rID}/comment")
+    @GetMapping("/{rID}/comment")
     public List<ResourceCommentDto> getAllResourceComments(@PathVariable long rID) {
         return resourceCommentService.getAllResourceComments(rID);
     }
 
     // Get a comment by its ID
-    @GetMapping("/resource/{rID}/comment/{rcmID}")
+    @GetMapping("/{rID}/comment/{rcmID}")
     public ResponseEntity<ResourceCommentDto> getResourceCommentById(@PathVariable Long rcmID, @PathVariable Long rID) {
         ResourceCommentDto resourceCommentDto = resourceCommentService.getResourceCommentById(rID,rcmID);
         return new ResponseEntity<>(resourceCommentDto, HttpStatus.OK);
     }
 
     // Delete a comment by its ID
-    @DeleteMapping("/resource/{rID}/comment/{rcmID}")
+    @DeleteMapping("/{rID}/comment/{rcmID}")
     public ResponseEntity<String> deleteResourceComment(@PathVariable Long rcmID, @PathVariable Long rID) {
         return new ResponseEntity<>(resourceCommentService.deleteResourceComment(rID, rcmID),HttpStatus.NO_CONTENT);
     }
