@@ -1,6 +1,6 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
-import com.alphacodes.librarymanagementsystem.DTO.ResourceCommentDto;
+import com.alphacodes.librarymanagementsystem.DTO.CommentDto;
 import com.alphacodes.librarymanagementsystem.service.ResourceCommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/user/{userID}/resource")
+@RequestMapping("/resource")
 public class ResourceCommentController {
     private final ResourceCommentService resourceCommentService;
 
@@ -20,21 +20,21 @@ public class ResourceCommentController {
 
     // Add a new comment to a resource
     @PostMapping("/{rID}/comment")
-    public ResponseEntity<ResourceCommentDto> addResourceComment(@PathVariable int userID,@PathVariable Long rID, @RequestBody ResourceCommentDto resourceCommentDto) {
-        return new ResponseEntity<>(resourceCommentService.addResourceComment(userID, rID, resourceCommentDto), HttpStatus.CREATED);
+    public ResponseEntity<CommentDto> addResourceComment(@PathVariable Long rID, @RequestBody CommentDto CommentDto) {
+        return new ResponseEntity<>(resourceCommentService.addResourceComment(rID, CommentDto), HttpStatus.CREATED);
     }
 
     // Get all comments for a resource
     @GetMapping("/{rID}/comment")
-    public List<ResourceCommentDto> getAllResourceComments(@PathVariable long rID) {
+    public List<CommentDto> getAllResourceComments(@PathVariable long rID) {
         return resourceCommentService.getAllResourceComments(rID);
     }
 
     // Get a comment by its ID
     @GetMapping("/{rID}/comment/{rcmID}")
-    public ResponseEntity<ResourceCommentDto> getResourceCommentById(@PathVariable Long rcmID, @PathVariable Long rID) {
-        ResourceCommentDto resourceCommentDto = resourceCommentService.getResourceCommentById(rID,rcmID);
-        return new ResponseEntity<>(resourceCommentDto, HttpStatus.OK);
+    public ResponseEntity<CommentDto> getResourceCommentById(@PathVariable Long rcmID, @PathVariable Long rID) {
+        CommentDto commentDto = resourceCommentService.getResourceCommentById(rID,rcmID);
+        return new ResponseEntity<>(commentDto, HttpStatus.OK);
     }
 
     // Delete a comment by its ID

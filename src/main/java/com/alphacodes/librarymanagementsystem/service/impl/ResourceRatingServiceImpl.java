@@ -1,6 +1,6 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
-import com.alphacodes.librarymanagementsystem.DTO.ResourceRatingDto;
+import com.alphacodes.librarymanagementsystem.DTO.RatingDto;
 import com.alphacodes.librarymanagementsystem.Model.ResourceRating;
 import com.alphacodes.librarymanagementsystem.repository.ResourceRatingRepository;
 import com.alphacodes.librarymanagementsystem.repository.ResourceRepository;
@@ -24,14 +24,13 @@ public class ResourceRatingServiceImpl implements ResourceRatingService {
     }
 
     @Override
-    public ResourceRatingDto addResourceRating(int userID, Long rID, ResourceRatingDto rating) {
-        ResourceRating resourceRating = convertToResourceRating(rating);
+    public RatingDto addResourceRating(Long rID, RatingDto ratingDto) {
+        ResourceRating resourceRating = convertToResourceRating(ratingDto);
         resourceRating.setBook(resourceRepository.findById(rID).orElseThrow(
             () -> new RuntimeException("Resource not found with id " + rID)));
-        resourceRating.setMember(userRepository.findByUserID(userID).orElse(null));
 
         ResourceRating newResourceRating = resourceRatingRepository.save(resourceRating);
-        return convertToResourceRatingDto(newResourceRating);
+        return convertToRatingDto(newResourceRating);
     }
 
     @Override
@@ -56,16 +55,19 @@ public class ResourceRatingServiceImpl implements ResourceRatingService {
         return sum / ratings.size();
     }
 
-    private ResourceRating convertToResourceRating(ResourceRatingDto resourceRatingDto) {
+    private ResourceRating convertToResourceRating(RatingDto ratingDto) {
         ResourceRating resourceRating = new ResourceRating();
-        resourceRating.setRating(resourceRatingDto.getRating());
+        resourceRating.setMember(userRepository.findById(ratingDto.getUserID()).orElseThrow(
+            () -> new RuntimeException("User not found with id " + ratingDto.getUserID())));
+        resourceRating.setRating(ratingDto.getRating());
         return resourceRating;
     }
 
-    private ResourceRatingDto convertToResourceRatingDto(ResourceRating resourceRating) {
-        ResourceRatingDto resourceRatingDto = new ResourceRatingDto();
-        resourceRatingDto.setRating(resourceRating.getRating());
-        return resourceRatingDto;
+    private RatingDto convertToRatingDto(ResourceRating resourceRating) {
+        RatingDto ratingDto = new RatingDto();
+        ratingDto.setUserID(resourceRating.getMember().getUserID());
+        ratingDto.setRating(resourceRating.getRating());
+        return ratingDto;
     }
 
 }

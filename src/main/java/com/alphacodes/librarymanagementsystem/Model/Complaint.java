@@ -19,6 +19,7 @@ public class Complaint {
     @ManyToOne
     @JoinColumn(name = "member", nullable = false)
     private User member;
+    //TODO private int userID ;
 
 }
 

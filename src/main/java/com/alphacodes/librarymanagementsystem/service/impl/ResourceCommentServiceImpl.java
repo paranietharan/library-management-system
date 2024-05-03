@@ -1,6 +1,6 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
-import com.alphacodes.librarymanagementsystem.DTO.ResourceCommentDto;
+import com.alphacodes.librarymanagementsystem.DTO.CommentDto;
 import com.alphacodes.librarymanagementsystem.Model.ResourceComment;
 import com.alphacodes.librarymanagementsystem.repository.ResourceCommentRepository;
 import com.alphacodes.librarymanagementsystem.repository.ResourceRepository;
@@ -24,29 +24,29 @@ public class ResourceCommentServiceImpl implements ResourceCommentService{
     }
 
     @Override
-    public ResourceCommentDto addResourceComment(int userID,Long rID, ResourceCommentDto resourceCommentDto) {
-        ResourceComment resourceComment1 = convertToResourceComment(resourceCommentDto);
+    public CommentDto addResourceComment(Long rID, CommentDto commentDto) {
+        ResourceComment resourceComment1 = convertToResourceComment(commentDto);
         resourceComment1.setBook(resourceRepository.findById(rID).orElseThrow(
                 () -> new RuntimeException("Resource not found with id " + rID)));
-        resourceComment1.setMember(userRepository.findByUserID(userID).orElse(null));
+
 
         ResourceComment newResourceComment = resourceCommentRepository.save(resourceComment1);
-        return convertToResourceCommentDto(newResourceComment);
+        return convertToCommentDto(newResourceComment);
     }
 
     @Override
-    public List<ResourceCommentDto> getAllResourceComments(Long rID) {
+    public List<CommentDto> getAllResourceComments(Long rID) {
         List<ResourceComment> resourceComments = resourceCommentRepository.findByBook(resourceRepository.findById(rID).orElseThrow(
                 () -> new RuntimeException("Resource not found with id " + rID))
         );
-        return resourceComments.stream().map(this::convertToResourceCommentDto).collect(Collectors.toList());
+        return resourceComments.stream().map(this::convertToCommentDto).collect(Collectors.toList());
     }
 
     @Override
-    public ResourceCommentDto getResourceCommentById(Long rID, Long rcmID) {
+    public CommentDto getResourceCommentById(Long rID, Long rcmID) {
         ResourceComment resourceComment = resourceCommentRepository.findById(rcmID).orElseThrow(
                 () -> new RuntimeException("Resource Comment not found with id " + rcmID));
-        return convertToResourceCommentDto(resourceComment);
+        return convertToCommentDto(resourceComment);
     }
 
     @Override
@@ -57,16 +57,18 @@ public class ResourceCommentServiceImpl implements ResourceCommentService{
         return "Resource Comment deleted Successfully";
     }
 
-    private ResourceComment convertToResourceComment(ResourceCommentDto resourceCommentDto){
+    private ResourceComment convertToResourceComment(CommentDto commentDto){
         ResourceComment resourceComment = new ResourceComment();
-        resourceComment.setComment(resourceCommentDto.getComment());
+        resourceComment.setMember(userRepository.findByUserID(commentDto.getUserID()).orElse(null));
+        resourceComment.setComment(commentDto.getComment());
         return resourceComment;
     }
 
-    private ResourceCommentDto convertToResourceCommentDto(ResourceComment resourceComment){
-        ResourceCommentDto resourceCommentDto = new ResourceCommentDto();
-        resourceCommentDto.setComment(resourceComment.getComment());
-        return resourceCommentDto;
+    private CommentDto convertToCommentDto(ResourceComment resourceComment){
+        CommentDto CommentDto = new CommentDto();
+        CommentDto.setUserID(resourceComment.getMember().getUserID());
+        CommentDto.setComment(resourceComment.getComment());
+        return CommentDto;
     }
 
 }

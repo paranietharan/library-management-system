@@ -1,7 +1,6 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
-import com.alphacodes.librarymanagementsystem.DTO.ComplaintRequest;
-import com.alphacodes.librarymanagementsystem.DTO.ComplaintResponse;
+import com.alphacodes.librarymanagementsystem.DTO.ComplaintDto;
 import com.alphacodes.librarymanagementsystem.service.ComplaintService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("user/{userID}/complaint")
+@RequestMapping("/complaint")
 public class ComplaintController {
     private final ComplaintService complaintService;
 
@@ -18,21 +17,21 @@ public class ComplaintController {
     }
 
     @PostMapping
-    public ResponseEntity<ComplaintResponse> addComplaint(@PathVariable int userID, @RequestBody ComplaintRequest complaintRequest) {
-        ComplaintResponse complaintResponse = complaintService.addComplaint(userID, complaintRequest);
-        return ResponseEntity.ok(complaintResponse);
+    public ResponseEntity<ComplaintDto> addComplaint(@RequestBody ComplaintDto complaintDto) {
+        ComplaintDto complaintDto1 = complaintService.addComplaint(complaintDto);
+        return ResponseEntity.ok(complaintDto1);
     }
 
     @GetMapping
-    public ResponseEntity<List<ComplaintResponse>> getAllComplaints() {
-        List<ComplaintResponse> complaintResponses = complaintService.getAllComplaints();
-        return ResponseEntity.ok(complaintResponses);
+    public ResponseEntity<List<ComplaintDto>> getAllComplaints() {
+        List<ComplaintDto> complaintDto = complaintService.getAllComplaints();
+        return ResponseEntity.ok(complaintDto);
     }
 
     @GetMapping("/{cID}")
-    public ResponseEntity<ComplaintResponse> getComplaintById(@PathVariable Long cID) {
-        ComplaintResponse complaintResponse = complaintService.getComplaint(cID);
-        return ResponseEntity.ok(complaintResponse);
+    public ResponseEntity<ComplaintDto> getComplaintById(@PathVariable Long cID) {
+        ComplaintDto complaintDto = complaintService.getComplaint(cID);
+        return ResponseEntity.ok(complaintDto);
     }
 
     @DeleteMapping("/{cID}")

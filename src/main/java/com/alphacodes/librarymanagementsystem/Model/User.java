@@ -3,6 +3,7 @@ package com.alphacodes.librarymanagementsystem.Model;
 import com.alphacodes.librarymanagementsystem.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name = "users")
 public class User {
     @Id
@@ -44,14 +46,8 @@ public class User {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Fine> fines = new HashSet<>();
 
-    @OneToMany(mappedBy = "librarian", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Fine> fines1 = new HashSet<>();
+    //TODO One to many
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Issue issue;
-
-    @OneToOne(mappedBy = "librarian", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Issue issue1;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Reservation> reservations = new HashSet<>();

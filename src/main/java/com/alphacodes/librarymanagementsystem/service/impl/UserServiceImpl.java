@@ -1,26 +1,31 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.LoginResponse;
+import com.alphacodes.librarymanagementsystem.DTO.UserDto;
 import com.alphacodes.librarymanagementsystem.JwtAuthenticationConfig.JWTauthentication;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.alphacodes.librarymanagementsystem.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+public class UserServiceImpl implements UserService{
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JWTauthentication jwtA;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder; // Autowire BCryptPasswordEncoder
 
-    @Autowired
-    private JWTauthentication jwtA;
+    public UserServiceImpl(UserRepository userRepository , BCryptPasswordEncoder bCryptPasswordEncoder, JWTauthentication jwtA) {
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jwtA = jwtA;
+    }
 
+
+    @Override
     public LoginResponse performlogin(String userEmailAddress, String password) {
         User user = userRepository.findByEmailAddress(userEmailAddress);
         if (user == null) {
@@ -34,13 +39,18 @@ public class UserService {
             return new LoginResponse("Incorrect Password", false, null);
         }
     }
+    //TODO: http response status code
 
-    public User saveDetails(User user) {
+   @Override
+    public User saveDetails(UserDto userDto) {
+        User user = userDto.toUser();
         String encryptedPassword = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encryptedPassword);
         return userRepository.save(user);
     }
+    //TODO: return type
 
+    @Override
     public List<User> getAllUserDetails() {
         return userRepository.findAll();
     }

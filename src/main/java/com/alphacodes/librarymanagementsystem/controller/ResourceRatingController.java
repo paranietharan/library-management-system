@@ -1,13 +1,13 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
-import com.alphacodes.librarymanagementsystem.DTO.ResourceRatingDto;
+import com.alphacodes.librarymanagementsystem.DTO.RatingDto;
 import com.alphacodes.librarymanagementsystem.service.ResourceRatingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user/{userID}/resource")
+@RequestMapping("/resource")
 
 public class ResourceRatingController {
     private final ResourceRatingService resourceRatingService;
@@ -18,8 +18,8 @@ public class ResourceRatingController {
 
     // Add a new rating to a resource
     @PostMapping("/{rID}/rating")
-    public ResponseEntity<ResourceRatingDto> addResourceRating(@PathVariable int userID, @PathVariable Long rID, @RequestBody ResourceRatingDto resourceRatingDto) {
-        return new ResponseEntity<>(resourceRatingService.addResourceRating(userID, rID, resourceRatingDto), HttpStatus.CREATED);
+    public ResponseEntity<RatingDto> addResourceRating(@PathVariable Long rID, @RequestBody RatingDto RatingDto) {
+        return new ResponseEntity<>(resourceRatingService.addResourceRating(rID, RatingDto), HttpStatus.CREATED);
     }
 
     // Get the rating for a resource

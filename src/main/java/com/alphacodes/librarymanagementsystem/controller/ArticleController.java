@@ -1,8 +1,8 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
-import com.alphacodes.librarymanagementsystem.Model.Article;
+import com.alphacodes.librarymanagementsystem.DTO.ArticleDto;
 import com.alphacodes.librarymanagementsystem.service.ArticleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,7 +10,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/article")
 public class ArticleController {
-    @Autowired
     private final ArticleService articleService;
 
     public ArticleController(ArticleService articleService) {
@@ -18,13 +17,23 @@ public class ArticleController {
     }
 
     @PostMapping("/add")
-    public String addArticle(@RequestBody Article article){
-        articleService.AddArticle(article);
-        return "Success";
+    public ResponseEntity<ArticleDto> addArticle(@RequestBody ArticleDto articleDto) {
+        return ResponseEntity.ok(articleService.addArticle(articleDto));
     }
 
-    @GetMapping(value="/articles")
-    public List<Article> posts(){
-        return articleService.getAllArticles();
+    @GetMapping("/all")
+    public ResponseEntity<List<ArticleDto>> getAllArticles() {
+        return ResponseEntity.ok(articleService.getAllArticles());
     }
+
+    @GetMapping("/{articleID}")
+    public ResponseEntity<ArticleDto> getArticleById(@PathVariable int articleID) {
+        return ResponseEntity.ok(articleService.getArticleById(articleID));
+    }
+
+    @DeleteMapping("/{articleID}")
+    public ResponseEntity<String> deleteArticle(@PathVariable int articleID) {
+        return ResponseEntity.ok(articleService.deleteArticle(articleID));
+    }
+
 }

@@ -1,9 +1,9 @@
 package com.alphacodes.librarymanagementsystem.service;
 
-import com.alphacodes.librarymanagementsystem.DTO.ResourceRatingDto;
+import com.alphacodes.librarymanagementsystem.DTO.RatingDto;
 
 public interface ResourceRatingService {
-    ResourceRatingDto addResourceRating(int userID, Long rID, ResourceRatingDto rating);
+    RatingDto addResourceRating(Long rID, RatingDto ratingDto);
     float getResourceRating(Long rID);
 
 }

@@ -1,7 +1,6 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
-import com.alphacodes.librarymanagementsystem.DTO.ComplaintRequest;
-import com.alphacodes.librarymanagementsystem.DTO.ComplaintResponse;
+import com.alphacodes.librarymanagementsystem.DTO.ComplaintDto;
 import com.alphacodes.librarymanagementsystem.Model.Complaint;
 import com.alphacodes.librarymanagementsystem.repository.ComplaintRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
@@ -23,11 +22,10 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     @Override
-    public ComplaintResponse addComplaint(int userID, ComplaintRequest complaintRequest) {
-        Complaint complaint = mapToComplaint(complaintRequest);
-        complaint.setMember(userRepository.findByUserID(userID).orElse(null));
+    public ComplaintDto addComplaint(ComplaintDto complaintDto) {
+        Complaint complaint = mapToComplaint(complaintDto);
         Complaint newComplaint = complaintRepository.save(complaint);
-        return mapToComplaintResponse(newComplaint);
+        return mapToComplaintDto(newComplaint);
     }
 
     @Override
@@ -37,28 +35,30 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     @Override
-    public List<ComplaintResponse> getAllComplaints() {
+    public List<ComplaintDto> getAllComplaints() {
         List<Complaint> complaints = complaintRepository.findAll();
-        return complaints.stream().map(this::mapToComplaintResponse).collect(Collectors.toList());
+        return complaints.stream().map(this::mapToComplaintDto).collect(Collectors.toList());
     }
 
     @Override
-    public ComplaintResponse getComplaint(Long cID) {
+    public ComplaintDto getComplaint(Long cID) {
         Complaint complaint = complaintRepository.findById(cID).orElseThrow(
                 () -> new RuntimeException("Complaint not found with id " + cID));
-        return mapToComplaintResponse(complaint);
+        return mapToComplaintDto(complaint);
     }
 
-    private ComplaintResponse mapToComplaintResponse(Complaint complaint) {
-        ComplaintResponse complaintResponse = new ComplaintResponse();
-        complaintResponse.setUserID(complaint.getMember().getUserID());
-        complaintResponse.setComplaint(complaint.getComplaint());
-        return complaintResponse;
+    private ComplaintDto mapToComplaintDto(Complaint complaint) {
+        ComplaintDto complaintDto = new ComplaintDto();
+        complaintDto.setUserID(complaint.getMember().getUserID());
+        complaintDto.setComplaint(complaint.getComplaint());
+        return complaintDto;
     }
 
-    private Complaint mapToComplaint(ComplaintRequest complaintRequest) {
+    private Complaint mapToComplaint(ComplaintDto complaintDto) {
         Complaint complaint = new Complaint();
-        complaint.setComplaint(complaintRequest.getComplaint());
+        complaint.setMember(userRepository.findById(complaintDto.getUserID()).orElseThrow(
+                () -> new RuntimeException("User not found with id " + complaintDto.getUserID())));
+        complaint.setComplaint(complaintDto.getComplaint());
         return complaint;
     }
 }
