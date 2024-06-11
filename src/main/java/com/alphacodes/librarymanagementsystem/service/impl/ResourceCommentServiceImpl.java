@@ -24,10 +24,10 @@ public class ResourceCommentServiceImpl implements ResourceCommentService{
     }
 
     @Override
-    public CommentDto addResourceComment(Long rID, CommentDto commentDto) {
+    public CommentDto addResourceComment(Long resourceId, CommentDto commentDto) {
         ResourceComment resourceComment1 = convertToResourceComment(commentDto);
-        resourceComment1.setBook(resourceRepository.findById(rID).orElseThrow(
-                () -> new RuntimeException("Resource not found with id " + rID)));
+        resourceComment1.setBook(resourceRepository.findById(resourceId).orElseThrow(
+                () -> new RuntimeException("Resource not found with id " + resourceId)));
 
 
         ResourceComment newResourceComment = resourceCommentRepository.save(resourceComment1);
@@ -35,24 +35,24 @@ public class ResourceCommentServiceImpl implements ResourceCommentService{
     }
 
     @Override
-    public List<CommentDto> getAllResourceComments(Long rID) {
-        List<ResourceComment> resourceComments = resourceCommentRepository.findByBook(resourceRepository.findById(rID).orElseThrow(
-                () -> new RuntimeException("Resource not found with id " + rID))
+    public List<CommentDto> getAllResourceComments(Long resourceId) {
+        List<ResourceComment> resourceComments = resourceCommentRepository.findByBook(resourceRepository.findById(resourceId).orElseThrow(
+                () -> new RuntimeException("Resource not found with id " + resourceId))
         );
         return resourceComments.stream().map(this::convertToCommentDto).collect(Collectors.toList());
     }
 
     @Override
-    public CommentDto getResourceCommentById(Long rID, Long rcmID) {
-        ResourceComment resourceComment = resourceCommentRepository.findById(rcmID).orElseThrow(
-                () -> new RuntimeException("Resource Comment not found with id " + rcmID));
+    public CommentDto getResourceCommentById(Long resourceId, Long resourceCommentId) {
+        ResourceComment resourceComment = resourceCommentRepository.findById(resourceCommentId).orElseThrow(
+                () -> new RuntimeException("Resource Comment not found with id " + resourceCommentId));
         return convertToCommentDto(resourceComment);
     }
 
     @Override
-    public String deleteResourceComment(Long rID, Long rcmID) {
-        ResourceComment resourceComment = resourceCommentRepository.findById(rcmID).orElseThrow(
-                () -> new RuntimeException("Resource Comment not found with id " + rcmID));
+    public String deleteResourceComment(Long resourceId, Long resourceCommentId) {
+        ResourceComment resourceComment = resourceCommentRepository.findById(resourceCommentId).orElseThrow(
+                () -> new RuntimeException("Resource Comment not found with id " + resourceCommentId));
         resourceCommentRepository.delete(resourceComment);
         return "Resource Comment deleted Successfully";
     }

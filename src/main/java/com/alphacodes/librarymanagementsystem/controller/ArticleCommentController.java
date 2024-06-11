@@ -18,27 +18,27 @@ public class ArticleCommentController {
     }
 
     // Add a new comment to an article
-    @PostMapping("/{aID}/comment")
-    public ResponseEntity<CommentDto> addArticleComment(@PathVariable int aID, @RequestBody CommentDto CommentDto) {
-        return new ResponseEntity<>(articleCommentService.addArticleComment(aID, CommentDto), HttpStatus.CREATED);
+    @PostMapping("/{articleId}/comment")
+    public ResponseEntity<CommentDto> addArticleComment(@PathVariable int articleId, @RequestBody CommentDto CommentDto) {
+        return new ResponseEntity<>(articleCommentService.addArticleComment(articleId, CommentDto), HttpStatus.CREATED);
     }
 
     // Get all comments for an article
-    @GetMapping("/{aID}/comment")
-    public List<CommentDto> getAllArticleComments(@PathVariable int aID) {
-        return articleCommentService.getAllArticleComments(aID);
+    @GetMapping("/{articleId}/comment")
+    public List<CommentDto> getAllArticleComments(@PathVariable int articleId) {
+        return articleCommentService.getAllArticleComments(articleId);
     }
 
     // Get a comment by its ID
-    @GetMapping("/{aID}/comment/{acmID}")
-    public ResponseEntity<CommentDto> getArticleCommentById(@PathVariable int acmID, @PathVariable int aID) {
-        CommentDto commentDto = articleCommentService.getArticleCommentById(aID,acmID);
+    @GetMapping("/{articleId}/comment/{articleCommentId}")
+    public ResponseEntity<CommentDto> getArticleCommentById(@PathVariable int articleCommentId, @PathVariable int articleId) {
+        CommentDto commentDto = articleCommentService.getArticleCommentById(articleId,articleCommentId);
         return new ResponseEntity<>(commentDto, HttpStatus.OK);
     }
 
     // Delete a comment by its ID
-    @DeleteMapping("/{aID}/comment/{acmID}")
-    public ResponseEntity<String> deleteArticleComment(@PathVariable int acmID, @PathVariable int aID) {
-        return new ResponseEntity<>(articleCommentService.deleteArticleComment(aID, acmID),HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{articleId}/comment/{articleCommentId}")
+    public ResponseEntity<String> deleteArticleComment(@PathVariable int articleCommentId, @PathVariable int articleId) {
+        return new ResponseEntity<>(articleCommentService.deleteArticleComment(articleId, articleCommentId),HttpStatus.NO_CONTENT);
     }
 }

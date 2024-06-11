@@ -15,7 +15,7 @@ import java.util.Date;
 public class Issue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long imID;
+    private Long issueId;
     private Date date;
 
     @OneToOne

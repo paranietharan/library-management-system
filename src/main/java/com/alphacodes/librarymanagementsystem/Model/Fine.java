@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class Fine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fmID;
+    private Long fineId;
     private double amount;
     private String status;
 

@@ -32,24 +32,24 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public ResourceDto getResourceById(Long rID) {
-        Resource resource = resourceRepository.findById(rID).orElseThrow(
-                () -> new RuntimeException("Resource not found with id " + rID));
+    public ResourceDto getResourceById(Long resourceId) {
+        Resource resource = resourceRepository.findById(resourceId).orElseThrow(
+                () -> new RuntimeException("Resource not found with id " + resourceId));
         return convertToResourceDto(resource);
     }
 
     @Override
-    public String deleteResource(Long rID) {
-        Resource resource = resourceRepository.findById(rID).orElseThrow(
-                () -> new RuntimeException("Resource not found with id " + rID));
+    public String deleteResource(Long resourceId) {
+        Resource resource = resourceRepository.findById(resourceId).orElseThrow(
+                () -> new RuntimeException("Resource not found with id " + resourceId));
         resourceRepository.delete(resource);
         return "Resource deleted Successfully";
     }
 
     @Override
-    public ResourceDto updateResource(Long rID, ResourceDto resourceDto) {
-        Resource resource = resourceRepository.findById(rID).orElseThrow(
-                () -> new RuntimeException("Resource not found with id " + rID));
+    public ResourceDto updateResource(Long resourceId, ResourceDto resourceDto) {
+        Resource resource = resourceRepository.findById(resourceId).orElseThrow(
+                () -> new RuntimeException("Resource not found with id " + resourceId));
         resource.setAuthor(resourceDto.getAuthor());
         resource.setCategory(resourceDto.getCategory());
         resource.setTitle(resourceDto.getTitle());

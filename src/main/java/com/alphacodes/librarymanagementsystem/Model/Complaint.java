@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class Complaint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cID;
+    private Long complaintId;
     private String complaint;
 
     @ManyToOne

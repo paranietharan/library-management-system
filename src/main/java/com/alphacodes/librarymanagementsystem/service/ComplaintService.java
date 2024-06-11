@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ComplaintService {
     ComplaintDto addComplaint(ComplaintDto complaintDto);
-    String deleteComplaint(Long cID);
+    String deleteComplaint(Long complaintId);
     List<ComplaintDto> getAllComplaints();
-    ComplaintDto getComplaint(Long cID);
+    ComplaintDto getComplaint(Long complaintId);
 }

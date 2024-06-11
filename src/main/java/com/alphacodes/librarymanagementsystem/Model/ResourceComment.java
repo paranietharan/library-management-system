@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class ResourceComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long rcmID;
+    private Long resourceCommentId;
     private String comment;
 
     @ManyToOne

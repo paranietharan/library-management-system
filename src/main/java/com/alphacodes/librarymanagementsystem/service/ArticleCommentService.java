@@ -7,7 +7,7 @@ import java.util.List;
 public interface ArticleCommentService {
     CommentDto addArticleComment(int articleID, CommentDto commentDto);
     List<CommentDto> getAllArticleComments(int articleID);
-    CommentDto getArticleCommentById(int articleID, int acmID);
-    String deleteArticleComment(int articleID, int acmID);
+    CommentDto getArticleCommentById(int articleID, int articleCommentId);
+    String deleteArticleComment(int articleID, int articleCommentId);
 
 }

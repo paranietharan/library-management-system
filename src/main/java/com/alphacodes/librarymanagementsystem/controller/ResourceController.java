@@ -29,22 +29,22 @@ public class ResourceController {
     }
 
     // Get a resource by its ID
-    @GetMapping("/resource/{rID}")
-    public ResponseEntity<ResourceDto> getResourceById(@PathVariable Long rID) {
-        ResourceDto resourceDto = resourceService.getResourceById(rID);
+    @GetMapping("/resource/{resourceId}")
+    public ResponseEntity<ResourceDto> getResourceById(@PathVariable Long resourceId) {
+        ResourceDto resourceDto = resourceService.getResourceById(resourceId);
         return new ResponseEntity<>(resourceDto, HttpStatus.OK);
     }
 
     // Delete a resource by its ID
-    @DeleteMapping("/resource/{rID}")
-    public ResponseEntity<String> deleteResource(@PathVariable Long rID) {
-        return new ResponseEntity<>(resourceService.deleteResource(rID),HttpStatus.NO_CONTENT);
+    @DeleteMapping("/resource/{resourceId}")
+    public ResponseEntity<String> deleteResource(@PathVariable Long resourceId) {
+        return new ResponseEntity<>(resourceService.deleteResource(resourceId),HttpStatus.NO_CONTENT);
     }
 
     // Update a resource by its ID
-    @PutMapping("/resource/{rID}")
-    public ResponseEntity<ResourceDto> updateResource(@PathVariable Long rID, @RequestBody ResourceDto resourceDto) {
-        return new ResponseEntity<>(resourceService.updateResource(rID, resourceDto), HttpStatus.OK);
+    @PutMapping("/resource/{resourceId}")
+    public ResponseEntity<ResourceDto> updateResource(@PathVariable Long resourceId, @RequestBody ResourceDto resourceDto) {
+        return new ResponseEntity<>(resourceService.updateResource(resourceId, resourceDto), HttpStatus.OK);
     }
 
     // Search for a resource by keyword

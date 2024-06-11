@@ -28,15 +28,15 @@ public class ComplaintController {
         return ResponseEntity.ok(complaintDto);
     }
 
-    @GetMapping("/{cID}")
-    public ResponseEntity<ComplaintDto> getComplaintById(@PathVariable Long cID) {
-        ComplaintDto complaintDto = complaintService.getComplaint(cID);
+    @GetMapping("/{complaintId}")
+    public ResponseEntity<ComplaintDto> getComplaintById(@PathVariable Long complaintId) {
+        ComplaintDto complaintDto = complaintService.getComplaint(complaintId);
         return ResponseEntity.ok(complaintDto);
     }
 
-    @DeleteMapping("/{cID}")
-    public ResponseEntity<String> deleteComplaint(@PathVariable Long cID) {
-        String response = complaintService.deleteComplaint(cID);
+    @DeleteMapping("/{complaintId}")
+    public ResponseEntity<String> deleteComplaint(@PathVariable Long complaintId) {
+        String response = complaintService.deleteComplaint(complaintId);
         return ResponseEntity.ok(response);
     }
 }

@@ -29,8 +29,8 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     @Override
-    public String deleteComplaint(Long cID) {
-        complaintRepository.deleteById(cID);
+    public String deleteComplaint(Long complaintId) {
+        complaintRepository.deleteById(complaintId);
         return "Complaint deleted Successfully";
     }
 
@@ -41,9 +41,9 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     @Override
-    public ComplaintDto getComplaint(Long cID) {
-        Complaint complaint = complaintRepository.findById(cID).orElseThrow(
-                () -> new RuntimeException("Complaint not found with id " + cID));
+    public ComplaintDto getComplaint(Long complaintId) {
+        Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(
+                () -> new RuntimeException("Complaint not found with id " + complaintId));
         return mapToComplaintDto(complaint);
     }
 

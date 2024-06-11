@@ -19,27 +19,27 @@ public class ResourceCommentController {
     }
 
     // Add a new comment to a resource
-    @PostMapping("/{rID}/comment")
-    public ResponseEntity<CommentDto> addResourceComment(@PathVariable Long rID, @RequestBody CommentDto CommentDto) {
-        return new ResponseEntity<>(resourceCommentService.addResourceComment(rID, CommentDto), HttpStatus.CREATED);
+    @PostMapping("/{resourceId}/comment")
+    public ResponseEntity<CommentDto> addResourceComment(@PathVariable Long resourceId, @RequestBody CommentDto CommentDto) {
+        return new ResponseEntity<>(resourceCommentService.addResourceComment(resourceId, CommentDto), HttpStatus.CREATED);
     }
 
     // Get all comments for a resource
-    @GetMapping("/{rID}/comment")
-    public List<CommentDto> getAllResourceComments(@PathVariable long rID) {
-        return resourceCommentService.getAllResourceComments(rID);
+    @GetMapping("/{resourceId}/comment")
+    public List<CommentDto> getAllResourceComments(@PathVariable long resourceId) {
+        return resourceCommentService.getAllResourceComments(resourceId);
     }
 
     // Get a comment by its ID
-    @GetMapping("/{rID}/comment/{rcmID}")
-    public ResponseEntity<CommentDto> getResourceCommentById(@PathVariable Long rcmID, @PathVariable Long rID) {
-        CommentDto commentDto = resourceCommentService.getResourceCommentById(rID,rcmID);
+    @GetMapping("/{resourceId}/comment/{resourceCommentId}")
+    public ResponseEntity<CommentDto> getResourceCommentById(@PathVariable Long resourceCommentId, @PathVariable Long resourceId) {
+        CommentDto commentDto = resourceCommentService.getResourceCommentById(resourceId,resourceCommentId);
         return new ResponseEntity<>(commentDto, HttpStatus.OK);
     }
 
     // Delete a comment by its ID
-    @DeleteMapping("/{rID}/comment/{rcmID}")
-    public ResponseEntity<String> deleteResourceComment(@PathVariable Long rcmID, @PathVariable Long rID) {
-        return new ResponseEntity<>(resourceCommentService.deleteResourceComment(rID, rcmID),HttpStatus.NO_CONTENT);
+    @DeleteMapping("/{resourceId}/comment/{resourceCommentId}")
+    public ResponseEntity<String> deleteResourceComment(@PathVariable Long resourceCommentId, @PathVariable Long resourceId) {
+        return new ResponseEntity<>(resourceCommentService.deleteResourceComment(resourceId, resourceCommentId),HttpStatus.NO_CONTENT);
     }
 }

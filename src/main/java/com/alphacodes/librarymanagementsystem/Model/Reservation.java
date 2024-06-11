@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reID;
+    private Long reservationId;
     private String status;
 
     @ManyToOne

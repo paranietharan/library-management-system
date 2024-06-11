@@ -16,7 +16,7 @@ import java.util.Set;
 public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long rID;
+    private Long resourceId;
     private String title;
     private String author;
     private Integer availability;

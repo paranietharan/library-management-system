@@ -45,16 +45,16 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
-    public CommentDto getArticleCommentById(int articleID, int acmID) {
-        ArticleComment articleComment = articleCommentRepository.findById(acmID).orElseThrow(
-            () -> new RuntimeException("Article Comment not found with id " + acmID));
+    public CommentDto getArticleCommentById(int articleID, int articleCommentId) {
+        ArticleComment articleComment = articleCommentRepository.findById(articleCommentId).orElseThrow(
+            () -> new RuntimeException("Article Comment not found with id " + articleCommentId));
         return mapToCommentDto(articleComment);
     }
 
     @Override
-    public String deleteArticleComment(int articleID, int acmID) {
-        ArticleComment articleComment = articleCommentRepository.findById(acmID).orElseThrow(
-            () -> new RuntimeException("Article Comment not found with id " + acmID));
+    public String deleteArticleComment(int articleID, int articleCommentId) {
+        ArticleComment articleComment = articleCommentRepository.findById(articleCommentId).orElseThrow(
+            () -> new RuntimeException("Article Comment not found with id " + articleCommentId));
         articleCommentRepository.delete(articleComment);
         return "Article Comment deleted Successfully";
     }

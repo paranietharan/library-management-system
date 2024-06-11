@@ -15,7 +15,7 @@ import java.util.Date;
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cmID;
+    private Long chatId;
     private String chatMsg;
     private Date time;
     private Date date;

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class ResourceRating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long armID;
+    private Long resourceRatingId;
     private float rating;
 
     @ManyToOne

@@ -24,27 +24,27 @@ public class ResourceRatingServiceImpl implements ResourceRatingService {
     }
 
     @Override
-    public RatingDto addResourceRating(Long rID, RatingDto ratingDto) {
+    public RatingDto addResourceRating(Long resourceId, RatingDto ratingDto) {
         ResourceRating resourceRating = convertToResourceRating(ratingDto);
-        resourceRating.setBook(resourceRepository.findById(rID).orElseThrow(
-            () -> new RuntimeException("Resource not found with id " + rID)));
+        resourceRating.setBook(resourceRepository.findById(resourceId).orElseThrow(
+            () -> new RuntimeException("Resource not found with id " + resourceId)));
 
         ResourceRating newResourceRating = resourceRatingRepository.save(resourceRating);
         return convertToRatingDto(newResourceRating);
     }
 
     @Override
-    public float getResourceRating(Long rID) {
-        return calculateResourceRating(rID);
+    public float getResourceRating(Long resourceId) {
+        return calculateResourceRating(resourceId);
     }
 
 
-    private float calculateResourceRating(Long rID) {
-        List<ResourceRating> ratings = resourceRatingRepository.findByBook(resourceRepository.findById(rID).orElseThrow(
-            () -> new RuntimeException("Resource not found with id " + rID)));
+    private float calculateResourceRating(Long resourceId) {
+        List<ResourceRating> ratings = resourceRatingRepository.findByBook(resourceRepository.findById(resourceId).orElseThrow(
+            () -> new RuntimeException("Resource not found with id " + resourceId)));
 
         if (ratings.isEmpty()) {
-            throw new RuntimeException("No ratings found for resource with id " + rID);
+            throw new RuntimeException("No ratings found for resource with id " + resourceId);
         }
 
         float sum = 0;
