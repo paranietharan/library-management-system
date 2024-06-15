@@ -18,4 +18,10 @@ public class IssueController {
     public String issueResource(@RequestParam Long resourceId, @RequestParam int memberId, @RequestParam int librarianId) {
         return issueService.issueResource(resourceId, memberId, librarianId);
     }
+
+    // Get return Issued books
+    @PostMapping("/return")
+    public String returnResource(@RequestParam Long resourceId, @RequestParam int memberId) {
+        return issueService.returnResource(resourceId, memberId);
+    }
 }

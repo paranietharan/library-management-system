@@ -25,6 +25,8 @@ public class IssueServiceImpl implements IssueService {
     @Autowired
     private IssueRepository issueRepository;
 
+
+    // Function 2 issue resource
     @Override
     public String issueResource(Long resourceId, int memberId, int librarianId) {
         Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
@@ -59,6 +61,39 @@ public class IssueServiceImpl implements IssueService {
             }
         } else {
             return "Resource, Member, or Librarian not found.";
+        }
+    }
+
+
+    // get Return resources
+    //@Override
+    public String returnResource(Long resourceId, int memberId) {
+        Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
+        Optional<User> memberOpt = userRepository.findById(memberId);
+
+        if (resourceOpt.isPresent() && memberOpt.isPresent()) {
+            Resource resource = resourceOpt.get();
+            User member = memberOpt.get();
+
+            // Find the issue record
+            Optional<Issue> issueOpt = issueRepository.findIssueByMemberId(memberId);
+
+            if (issueOpt.isPresent()) {
+                Issue issue = issueOpt.get();
+
+                // Delete the issue record
+                issueRepository.delete(issue);
+
+                // Increase the availability count of the resource
+                resource.setAvailability(resource.getAvailability() + 1);
+                resourceRepository.save(resource);
+
+                return "Resource returned successfully.";
+            } else {
+                return "No issue record found for this resource and member.";
+            }
+        } else {
+            return "Resource or Member not found.";
         }
     }
 
