@@ -30,4 +30,3 @@ public class Issue {
     @JoinColumn(name = "librarian", nullable = false)
     private User librarian;
 }
-
