@@ -30,4 +30,13 @@ public class EmailServiceImpl implements EmailService {
             e.printStackTrace(); // or handle it in a better way
         }
     }
+
+    // Send OTP to the user
+    public void sendOTP(String to, String otp) {
+        sendSimpleEmail(
+                to,
+                "Your OTP Code",
+                "Your OTP code is: " + otp
+        );
+    }
 }
