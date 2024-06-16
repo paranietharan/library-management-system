@@ -40,6 +40,8 @@ public class ReservationServiceImpl implements ReservationService {
         // Check the member need to pay fine or not
         Fine fine = fineRepository.findByMember_Id(userId);
 
+        // If fine is not paid. Then return message to pay the fine first.
+        // becoz if they want to pay fine they can't reserve the resource.
         if (fine != null && !fine.isPaidStatus()) {
             return "Please pay the fine first.";
         } else {
