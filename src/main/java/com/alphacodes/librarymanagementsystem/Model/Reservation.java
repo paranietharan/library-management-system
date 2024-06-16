@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 
 
 @Data
@@ -26,5 +27,6 @@ public class Reservation {
     @JoinColumn(name = "book", nullable = false)
     private Resource book;
 
+    private LocalDateTime reservationTime;
 }
 
