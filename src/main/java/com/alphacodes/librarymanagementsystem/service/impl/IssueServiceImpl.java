@@ -1,8 +1,10 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
+import com.alphacodes.librarymanagementsystem.Model.Fine;
 import com.alphacodes.librarymanagementsystem.Model.Issue;
 import com.alphacodes.librarymanagementsystem.Model.Resource;
 import com.alphacodes.librarymanagementsystem.Model.User;
+import com.alphacodes.librarymanagementsystem.repository.FineRepository;
 import com.alphacodes.librarymanagementsystem.repository.IssueRepository;
 import com.alphacodes.librarymanagementsystem.repository.ResourceRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
@@ -24,6 +26,12 @@ public class IssueServiceImpl implements IssueService {
 
     @Autowired
     private IssueRepository issueRepository;
+
+    @Autowired
+    private FineRepository fineRepository;
+
+    @Autowired
+    private FineServiceImpl fineService;
 
 
     // Function 2 issue resource
@@ -55,6 +63,17 @@ public class IssueServiceImpl implements IssueService {
                 issue.setDate(new Date());
 
                 issueRepository.save(issue);
+
+                // Create a fine record
+                Fine fine = new Fine();
+                fine.setPaidStatus(false);
+                fine.setAmount(0);
+                fine.setMember(member);
+                fine.setLibrarian(librarian);
+                fine.setResourceIssueDate(new Date());
+                // Save the fine record
+                fineRepository.save(fine);
+
                 return "Resource issued successfully.";
             } else {
                 return "Resource is not available.";
@@ -87,6 +106,15 @@ public class IssueServiceImpl implements IssueService {
                 // Increase the availability count of the resource
                 resource.setAvailability(resource.getAvailability() + 1);
                 resourceRepository.save(resource);
+
+
+                // Calculate fine
+                double fineAmount = fineService.calculateFine(memberId);
+                if(fineAmount == 0){
+                    // if the fine is zero then delete the fine record
+                    Fine fine = fineRepository.findByMember_Id(memberId);
+                    fineRepository.delete(fine);
+                }
 
                 return "Resource returned successfully.";
             } else {
