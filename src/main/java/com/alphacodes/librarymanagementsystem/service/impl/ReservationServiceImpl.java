@@ -1,8 +1,10 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
+import com.alphacodes.librarymanagementsystem.Model.Fine;
 import com.alphacodes.librarymanagementsystem.Model.Reservation;
 import com.alphacodes.librarymanagementsystem.Model.Resource;
 import com.alphacodes.librarymanagementsystem.Model.User;
+import com.alphacodes.librarymanagementsystem.repository.FineRepository;
 import com.alphacodes.librarymanagementsystem.repository.ReservationRepository;
 import com.alphacodes.librarymanagementsystem.repository.ResourceRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
@@ -27,32 +29,44 @@ public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
 
+    @Autowired
+    private FineRepository fineRepository;
+
     @Transactional
     public String reserveResource(Long resourceId, int userId) {
         Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
         Optional<User> userOpt = userRepository.findById(userId);
 
-        if (resourceOpt.isPresent() && userOpt.isPresent()) {
-            Resource resource = resourceOpt.get();
-            User user = userOpt.get();
+        // Check the member need to pay fine or not
+        Fine fine = fineRepository.findByMember_Id(userId);
 
-            if (resource.getAvailability() > 0) {
-                resource.setAvailability(resource.getAvailability() - 1);
-                resourceRepository.save(resource);
-
-                Reservation reservation = new Reservation();
-                reservation.setBook(resource);
-                reservation.setMember(user);
-                reservation.setReservationTime(LocalDateTime.now());
-                reservation.setStatus("Active");
-                reservationRepository.save(reservation);
-
-                return "Resource reserved successfully for 24 hours.";
-            } else {
-                return "Resource is not available.";
-            }
+        if (fine != null && !fine.isPaidStatus()) {
+            return "Please pay the fine first.";
         } else {
-            return "Resource or User not found.";
+
+            if (resourceOpt.isPresent() && userOpt.isPresent()) {
+                Resource resource = resourceOpt.get();
+                User user = userOpt.get();
+
+                if (resource.getAvailability() > 0) {
+                    resource.setAvailability(resource.getAvailability() - 1);
+                    resourceRepository.save(resource);
+
+                    Reservation reservation = new Reservation();
+                    reservation.setBook(resource);
+                    reservation.setMember(user);
+                    reservation.setReservationTime(LocalDateTime.now());
+                    reservation.setStatus("Active");
+                    reservationRepository.save(reservation);
+
+                    return "Resource reserved successfully for 24 hours.";
+                } else {
+                    return "Resource is not available.";
+                }
+            } else {
+                return "Resource or User not found.";
+            }
+
         }
     }
 
