@@ -1,7 +1,7 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
-import com.alphacodes.librarymanagementsystem.service.impl.EmailServiceImpl;
-import com.alphacodes.librarymanagementsystem.service.impl.OTPServiceImpl;
+import com.alphacodes.librarymanagementsystem.EmailService.EmailServiceImpl;
+import com.alphacodes.librarymanagementsystem.OTPservice.OTPServiceImpl;
 import com.alphacodes.librarymanagementsystem.util.OTPGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

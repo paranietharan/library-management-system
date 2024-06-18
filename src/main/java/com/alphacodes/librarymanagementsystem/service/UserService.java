@@ -10,4 +10,6 @@ public interface UserService {
     User saveDetails(UserDto userDto);
     List<User> getAllUserDetails();
     LoginResponse performlogin(String email, String password);
+    boolean forgotPassword(String email);
+    boolean changePassword(String email, String password);
 }

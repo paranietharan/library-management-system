@@ -4,6 +4,7 @@ import com.alphacodes.librarymanagementsystem.DTO.LoginResponse;
 import com.alphacodes.librarymanagementsystem.DTO.UserDto;
 import com.alphacodes.librarymanagementsystem.JwtAuthenticationConfig.JWTauthentication;
 import com.alphacodes.librarymanagementsystem.Model.User;
+import com.alphacodes.librarymanagementsystem.OTPservice.OTPServiceImpl;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -54,4 +55,25 @@ public class UserServiceImpl implements UserService{
     public List<User> getAllUserDetails() {
         return userRepository.findAll();
     }
+
+    @Override
+    public boolean forgotPassword(String email) {
+        OTPServiceImpl otpService = new OTPServiceImpl();
+        String otp = otpService.generateOTP(email);
+        //TODO: send email
+        return true;
+    }
+
+    @Override
+    public boolean changePassword(String email, String password) {
+        User user = userRepository.findByEmailAddress(email);
+        if (user == null) {
+            return false;
+        }
+        String encryptedPassword = bCryptPasswordEncoder.encode(password);
+        user.setPassword(encryptedPassword);
+        userRepository.save(user);
+        return true;
+    }
+
 }
