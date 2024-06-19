@@ -2,6 +2,7 @@ package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.LoginResponse;
 import com.alphacodes.librarymanagementsystem.DTO.UserDto;
+import com.alphacodes.librarymanagementsystem.EmailService.EmailServiceImpl;
 import com.alphacodes.librarymanagementsystem.JwtAuthenticationConfig.JWTauthentication;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.OTPservice.OTPServiceImpl;
@@ -59,8 +60,9 @@ public class UserServiceImpl implements UserService{
     @Override
     public boolean forgotPassword(String email) {
         OTPServiceImpl otpService = new OTPServiceImpl();
+        EmailServiceImpl emailService = new EmailServiceImpl();
         String otp = otpService.generateOTP(email);
-        //TODO: send email
+        emailService.sendOTP(email, otp);
         return true;
     }
 

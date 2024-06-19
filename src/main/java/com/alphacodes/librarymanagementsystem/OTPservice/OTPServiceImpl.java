@@ -2,6 +2,7 @@ package com.alphacodes.librarymanagementsystem.OTPservice;
 
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,11 +13,22 @@ public class OTPServiceImpl {
     private final Map<String, Long> otpTimestamps = new ConcurrentHashMap<>();
     private static final long OTP_EXPIRATION_TIME = 5 * 60 * 1000; // 5 minutes
 
+    // OTP generation constants
+    private static final String CHARACTERS = "0123456789";
+    // OTP length is 6
+    private static final int OTP_LENGTH = 6;
+    private static final SecureRandom random = new SecureRandom();// SecureRandom is preferred for OTP generation
+
     public String generateOTP(String email) {
-        // Generate a random 6-digit OTP
-        String otp = String.valueOf((int) ((Math.random() * (999999 - 100000)) + 100000));
-        storeOTP(email, otp);
-        return otp;
+        // Generate OTP using SecureRandom
+        StringBuilder otp = new StringBuilder(OTP_LENGTH);
+
+        // Generate OTP of length 6
+        for (int i = 0; i < OTP_LENGTH; i++) {
+            otp.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+        }
+        storeOTP(email, otp.toString());
+        return otp.toString();
     }
 
     public void storeOTP(String email, String otp) {
