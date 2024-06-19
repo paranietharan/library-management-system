@@ -26,6 +26,10 @@ public class User {
     String emailAddress;
     String password;
 
+    @Lob
+    @Column(name = "profile_img", columnDefinition = "LONGBLOB")
+    private byte[] profileImg;
+
     @Enumerated(EnumType.STRING)
     Role role;
 
