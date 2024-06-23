@@ -5,6 +5,7 @@ import com.alphacodes.librarymanagementsystem.Model.Article;
 import com.alphacodes.librarymanagementsystem.repository.ArticleRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.ArticleService;
+import com.alphacodes.librarymanagementsystem.util.ImageUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,6 +54,10 @@ public class ArticleServiceImpl implements ArticleService {
         articleDto.setUserID(article.getAuthor().getUserID());
         articleDto.setTitle(article.getTitle());
         articleDto.setBody(article.getBody());
+
+        // Compress the image bytes before storing
+        byte[] compressedImage = ImageUtils.compressBytes(articleDto.getArticleImg());
+        article.setArticleImg(compressedImage);
         return articleDto;
     }
 
@@ -62,6 +67,10 @@ public class ArticleServiceImpl implements ArticleService {
                 () -> new RuntimeException("User not found with id " + articleDto.getUserID())));
         article.setTitle(articleDto.getTitle());
         article.setBody(articleDto.getBody());
+
+        // Decompress the stored image bytes before returning
+        byte[] decompressedImage = ImageUtils.decompressBytes(article.getArticleImg());
+        articleDto.setArticleImg(decompressedImage);
         return article;
     }
 

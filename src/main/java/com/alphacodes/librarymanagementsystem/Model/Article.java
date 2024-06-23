@@ -26,6 +26,10 @@ public class Article {
     String body;
     private Date dateCreated;
 
+    @Lob
+    @Column(name = "article_img", columnDefinition = "LONGBLOB")
+    private byte[] articleImg;
+
     @ManyToOne
     @JoinColumn(name = "members", nullable = false)
     private User author;
