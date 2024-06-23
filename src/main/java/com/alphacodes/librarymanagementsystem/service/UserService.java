@@ -10,4 +10,6 @@ public interface UserService {
     User saveDetails(UserDto userDto);
     List<User> getAllUserDetails();
     LoginResponse performlogin(String email, String password);
+
+    User createNewUser(User user); // Save new user with all  details
 }

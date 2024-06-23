@@ -39,6 +39,11 @@ public class UserServiceImpl implements UserService{
             return new LoginResponse("Incorrect Password", false, null);
         }
     }
+
+    @Override
+    public User createNewUser(User user) {
+        return userRepository.save(user);
+    }
     //TODO: http response status code
 
    @Override
