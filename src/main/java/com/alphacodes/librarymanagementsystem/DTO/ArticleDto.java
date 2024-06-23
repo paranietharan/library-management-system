@@ -13,3 +13,4 @@ public class ArticleDto {
     @Column(name = "article_img", columnDefinition = "LONGBLOB")
     private byte[] articleImg;
 }
+

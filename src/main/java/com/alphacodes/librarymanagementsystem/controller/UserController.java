@@ -19,16 +19,10 @@ public class UserController {
         this.userService = userService;
     }
 
-   @PostMapping("/saveUser")
+   @PostMapping("/createNewUser")
         public User postDetails(@RequestBody UserDto userDto) {
     return userService.saveDetails(userDto);
    }
-
-   // Save new user with all  details
-    @PostMapping("createNewUser")
-    public User createNewUser(@RequestBody User user) {
-        return userService.createNewUser(user);
-    }
 
     @GetMapping("/getAllUser")
         public List<User> getAllUserDetails() {
