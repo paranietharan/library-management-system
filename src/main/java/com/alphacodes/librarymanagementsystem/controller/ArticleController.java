@@ -80,4 +80,9 @@ public class ArticleController {
         return articleService.getArticleFullById(articleId);
     }
 
+    @GetMapping("getByUserID/{userId}")
+    public List<ArticleViewDto> getArticleByUserId(@PathVariable int userId) {
+        return articleService.getArticleByUserId(userId);
+    }
+
 }

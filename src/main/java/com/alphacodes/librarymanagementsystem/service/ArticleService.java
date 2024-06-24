@@ -20,4 +20,6 @@ public interface ArticleService {
     ArticleViewDto getArticleViewById(int articleId);
 
     Article getArticleFullById(int articleId);
+    // get article by passing author id
+    List<ArticleViewDto> getArticleByUserId(int userId);
 }

@@ -117,6 +117,12 @@ public class ArticleServiceImpl implements ArticleService {
         return articleRepository.findById(articleId).orElse(null);
     }
 
+    @Override
+    public List<ArticleViewDto> getArticleByUserId(int userId) {
+        List<Article> articles = articleRepository.findByAuthor_UserID(userId);
+        return articles.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
     private ArticleViewDto convertToDto(Article article) {
         ArticleViewDto dto = new ArticleViewDto();
         dto.setArticleID(article.getArticleId());
