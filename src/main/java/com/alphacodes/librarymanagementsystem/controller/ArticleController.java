@@ -1,6 +1,8 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
 import com.alphacodes.librarymanagementsystem.DTO.ArticleDto;
+import com.alphacodes.librarymanagementsystem.DTO.ArticleViewDto;
+import com.alphacodes.librarymanagementsystem.Model.Article;
 import com.alphacodes.librarymanagementsystem.service.ArticleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +61,23 @@ public class ArticleController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+
+    // for article view dto
+    @GetMapping("/allArticles")
+    public List<ArticleViewDto> getAllArticleView() {
+        return articleService.getAllArticleView();
+    }
+
+    @GetMapping("view/{articleId}")
+    public ArticleViewDto getArticleViewById(@PathVariable int articleId) {
+        return articleService.getArticleViewById(articleId);
+    }
+
+    @GetMapping("viewFull/{articleId}")
+    public Article getFullArticleById(@PathVariable int articleId) {
+        return articleService.getArticleFullById(articleId);
     }
 
 }

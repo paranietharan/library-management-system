@@ -1,7 +1,9 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
+import com.alphacodes.librarymanagementsystem.DTO.ArticleCommentDto;
 import com.alphacodes.librarymanagementsystem.DTO.CommentDto;
 import com.alphacodes.librarymanagementsystem.Model.ArticleComment;
+import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.repository.ArticleCommentRepository;
 import com.alphacodes.librarymanagementsystem.repository.ArticleRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
@@ -27,28 +29,25 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
-    public CommentDto addArticleComment(int articleID, CommentDto commentDto) {
-        ArticleComment articleComment1 = mapToArticleComment(commentDto);
-        articleComment1.setArticle(articleRepository.findById(articleID).orElseThrow(
-            () -> new RuntimeException("Article not found with id " + articleID)));
+    public ArticleComment addArticleComment(ArticleCommentDto articleCommentDto) {
+        ArticleComment articleComment = new ArticleComment();
 
-        ArticleComment newArticleComment = articleCommentRepository.save(articleComment1);
-        return mapToCommentDto(newArticleComment);
-    }
+        // set article comment string
+        articleComment.setComment(articleCommentDto.getComment());
 
-    @Override
-    public List<CommentDto> getAllArticleComments(int articleID) {
-        List<ArticleComment> articleComments = articleCommentRepository.findByArticle(articleRepository.findById(articleID).orElseThrow(
-            () -> new RuntimeException("Article not found with id " + articleID))
+        // set commenter
+        User commenter = userRepository.findById(articleCommentDto.getCommenterId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        articleComment.setCommenter(commenter);
+
+        // set article
+        articleComment.setArticle(
+                articleRepository.findById(articleCommentDto.getArticleId())
+                        .orElseThrow(() -> new RuntimeException("Article not found with id " + articleCommentDto.getArticleId()))
         );
-        return articleComments.stream().map(this::mapToCommentDto).collect(Collectors.toList());
-    }
 
-    @Override
-    public CommentDto getArticleCommentById(int articleID, int articleCommentId) {
-        ArticleComment articleComment = articleCommentRepository.findById(articleCommentId).orElseThrow(
-            () -> new RuntimeException("Article Comment not found with id " + articleCommentId));
-        return mapToCommentDto(articleComment);
+        // save article comment
+        return articleCommentRepository.save(articleComment);
     }
 
     @Override
@@ -59,19 +58,22 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         return "Article Comment deleted Successfully";
     }
 
-    private ArticleComment mapToArticleComment(CommentDto commentDto) {
-        ArticleComment articleComment = new ArticleComment();
-        articleComment.setComment(commentDto.getComment());
-        articleComment.setCommenter(userRepository.findByUserID(commentDto.getUserID()).orElse(null));
-        return articleComment;
-    }
+    @Override
+    public List<ArticleCommentDto> getAllArticleComments(int articleID) {
+        List<ArticleComment> articleComments = articleCommentRepository.findByArticle(
+                articleRepository.findById(articleID)
+                        .orElseThrow(() -> new RuntimeException("Article not found with id " + articleID))
+        );
 
-    private CommentDto mapToCommentDto(ArticleComment articleComment) {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setComment(articleComment.getComment());
-        commentDto.setUserID(articleComment.getCommenter().getUserID());
-        return commentDto;
+        return articleComments.stream()
+                .map(articleComment -> {
+                    ArticleCommentDto articleCommentDto = new ArticleCommentDto();
+                    articleCommentDto.setComment(articleComment.getComment());
+                    articleCommentDto.setCommenterId(articleComment.getCommenter().getUserID());
+                    articleCommentDto.setArticleId(articleComment.getArticle().getArticleId());
+                    return articleCommentDto;
+                })
+                .collect(Collectors.toList());
     }
-
 
 }

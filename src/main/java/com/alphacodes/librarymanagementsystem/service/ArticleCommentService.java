@@ -1,13 +1,14 @@
 package com.alphacodes.librarymanagementsystem.service;
 
-import com.alphacodes.librarymanagementsystem.DTO.CommentDto;
+import com.alphacodes.librarymanagementsystem.DTO.ArticleCommentDto;
+import com.alphacodes.librarymanagementsystem.Model.ArticleComment;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface ArticleCommentService {
-    CommentDto addArticleComment(int articleID, CommentDto commentDto);
-    List<CommentDto> getAllArticleComments(int articleID);
-    CommentDto getArticleCommentById(int articleID, int articleCommentId);
+    ArticleComment addArticleComment(ArticleCommentDto articleCommentDto);
     String deleteArticleComment(int articleID, int articleCommentId);
-
+    List<ArticleCommentDto> getAllArticleComments(int articleID);
 }

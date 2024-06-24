@@ -1,6 +1,7 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.ArticleDto;
+import com.alphacodes.librarymanagementsystem.DTO.ArticleViewDto;
 import com.alphacodes.librarymanagementsystem.Model.Article;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.repository.ArticleRepository;
@@ -10,6 +11,7 @@ import com.alphacodes.librarymanagementsystem.util.ImageUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -98,6 +100,32 @@ public class ArticleServiceImpl implements ArticleService {
         return article;
     }
 
+
+    // For article view dto
+    public List<ArticleViewDto> getAllArticleView() {
+        List<Article> articles = articleRepository.findAll();
+        return articles.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    public ArticleViewDto getArticleViewById(int articleId) {
+        Optional<Article> article = articleRepository.findById(articleId);
+        return article.map(this::convertToDto).orElse(null);
+    }
+
+    @Override
+    public Article getArticleFullById(int articleId) {
+        return articleRepository.findById(articleId).orElse(null);
+    }
+
+    private ArticleViewDto convertToDto(Article article) {
+        ArticleViewDto dto = new ArticleViewDto();
+        dto.setArticleID(article.getArticleId());
+        dto.setUserID(article.getAuthor().getUserID());
+        dto.setTitle(article.getTitle());
+        dto.setBody(article.getBody());
+        dto.setArticleImg(article.getArticleImg());
+        return dto;
+    }
 }
 
 
