@@ -2,6 +2,7 @@ package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.LoginResponse;
 import com.alphacodes.librarymanagementsystem.DTO.UserDto;
+import com.alphacodes.librarymanagementsystem.DTO.UserProfileDto;
 import com.alphacodes.librarymanagementsystem.JwtAuthenticationConfig.JWTauthentication;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
@@ -38,6 +39,24 @@ public class UserServiceImpl implements UserService{
         } else {
             return new LoginResponse("Incorrect Password", false, null);
         }
+    }
+
+    @Override
+    public UserProfileDto getUserProfileById(int id) {
+        User user = userRepository.findById(id).orElse(null);
+        UserProfileDto userProfileDto= new UserProfileDto();
+
+        if (user == null) {
+            return null;
+        }
+
+        userProfileDto.setFirstName(user.getFirstName());
+        userProfileDto.setLastName(user.getLastName());
+        userProfileDto.setRole(user.getRole());
+        userProfileDto.setProfileImg(user.getProfileImg());
+        userProfileDto.setUserID(user.getUserID());
+
+        return userProfileDto;
     }
     //TODO: http response status code
 

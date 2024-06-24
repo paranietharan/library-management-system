@@ -3,6 +3,7 @@ package com.alphacodes.librarymanagementsystem.controller;
 import com.alphacodes.librarymanagementsystem.DTO.LoginRequest;
 import com.alphacodes.librarymanagementsystem.DTO.LoginResponse;
 import com.alphacodes.librarymanagementsystem.DTO.UserDto;
+import com.alphacodes.librarymanagementsystem.DTO.UserProfileDto;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +38,12 @@ public class UserController {
            return ResponseEntity.ok(loginResponse);
 
    }
+
+    // Get user profile
+    @GetMapping("/getUserProfile/{id}")
+    public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable int id) {
+        UserProfileDto userProfileDto = userService.getUserProfileById(id);
+        return ResponseEntity.ok(userProfileDto);
+    }
 
 }

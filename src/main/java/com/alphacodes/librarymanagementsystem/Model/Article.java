@@ -33,7 +33,7 @@ public class Article {
     @Column(name = "article_img")
     private byte[] articleImg;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id", nullable = false) // Changed to "author_id" assuming this is the foreign key name
     private User author;
 
