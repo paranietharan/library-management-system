@@ -56,8 +56,7 @@ public class ArticleRatingServiceImpl implements ArticleRatingService {
 
     private ArticleRating convertToArticleRating(RatingDto ratingDto) {
         ArticleRating articleRating = new ArticleRating();
-        articleRating.setCommenter(userRepository.findById(ratingDto.getUserID()).orElseThrow(
-            () -> new RuntimeException("User not found with id " + ratingDto.getUserID())));
+        articleRating.setCommenter(userRepository.findByUserID(ratingDto.getUserID()));
         articleRating.setRating(ratingDto.getRating());
         return articleRating;
     }

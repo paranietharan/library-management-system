@@ -58,8 +58,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     private Article mapToArticle(ArticleDto articleDto) {
         Article article = new Article();
-        article.setAuthor(userRepository.findById(articleDto.getUserID()).orElseThrow(
-                () -> new RuntimeException("User not found with id " + articleDto.getUserID())));
+        article.setAuthor(userRepository.findByUserID(articleDto.getUserID()));
         article.setTitle(articleDto.getTitle());
         article.setBody(articleDto.getBody());
         return article;

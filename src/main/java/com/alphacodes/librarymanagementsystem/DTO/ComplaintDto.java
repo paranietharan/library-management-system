@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ComplaintDto {
-    private int userID;
+    private String userID;
     private String complaint;
 }
