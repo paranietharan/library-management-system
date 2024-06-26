@@ -4,6 +4,8 @@ import com.alphacodes.librarymanagementsystem.DTO.ArticleDto;
 import com.alphacodes.librarymanagementsystem.DTO.ArticleViewDto;
 import com.alphacodes.librarymanagementsystem.Model.Article;
 import com.alphacodes.librarymanagementsystem.Model.User;
+import com.alphacodes.librarymanagementsystem.repository.ArticleCommentRepository;
+import com.alphacodes.librarymanagementsystem.repository.ArticleRatingRepository;
 import com.alphacodes.librarymanagementsystem.repository.ArticleRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.ArticleService;
@@ -20,10 +22,14 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
 
     private final UserRepository userRepository;
+    private final ArticleCommentRepository articleCommentRepository;
+    private final ArticleRatingRepository articleRatingRepository;
 
-    public ArticleServiceImpl(ArticleRepository articleRepository, UserRepository userRepository) {
+    public ArticleServiceImpl(ArticleRepository articleRepository, UserRepository userRepository, ArticleCommentRepository articleCommentRepository, ArticleRatingRepository articleRatingRepository) {
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
+        this.articleCommentRepository = articleCommentRepository;
+        this.articleRatingRepository = articleRatingRepository;
     }
 
     @Override
@@ -143,6 +149,46 @@ public class ArticleServiceImpl implements ArticleService {
             articleRepository.save(updatedArticle);
 
             return mapToArticleDto(updatedArticle);
+        } else {
+            throw new RuntimeException("Article not found with id " + articleId);
+        }
+    }
+
+    @Override
+    public String DeleteArticle(int articleId, int userId) {
+        Optional<Article> existingArticle = articleRepository.findById(articleId);
+
+        if (existingArticle.isPresent()) {
+            Article article = existingArticle.get();
+
+            // Check if the user is the author of the article
+            if (article.getAuthor().getUserID() == userId) {
+                //Delete comments and ratings associated with the article
+
+                //01.Find and Deleted comments associated with the article
+                articleCommentRepository
+                        .findByArticle(article)
+                        .forEach(articleCommentRepository::delete);
+                System.out.println("Comments deleted successfully");
+
+                //02. Find Article Rating and delete it
+                articleRatingRepository.findByArticle(article)
+                        .forEach(articleRatingRepository::delete);
+
+                // Delete the article
+                articleRepository.deleteById(articleId);
+                return "Article deleted successfully";
+            }  else {
+                // check the user is LIBRARIAN
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+                if (user.getRole().equals("LIBRARIAN")) {
+                    articleRepository.deleteById(articleId);
+                    return "Article deleted successfully by librarian";
+                }
+
+                throw new RuntimeException("You are not authorized to delete this article");
+            }
         } else {
             throw new RuntimeException("Article not found with id " + articleId);
         }

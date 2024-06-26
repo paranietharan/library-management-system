@@ -12,7 +12,7 @@ public interface ArticleService {
      ArticleDto addArticle(ArticleDto articleDto);
      String deleteArticle(int articleID);
      ArticleDto getArticleById(int articleID);
-    List<ArticleDto> getAllArticles();
+     List<ArticleDto> getAllArticles();
 
 
     // For article view dto
@@ -24,4 +24,6 @@ public interface ArticleService {
     List<ArticleViewDto> getArticleByUserId(int userId);
     // Method for edit articles
     ArticleDto editArticle(ArticleDto article, int articleId);
+    // Method for delete articles
+    String DeleteArticle(int articleId, int userId);
 }

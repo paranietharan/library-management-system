@@ -147,4 +147,16 @@ public class ArticleController {
         }
     }
 
+    @DeleteMapping("{userId}/delete/{articleId}")
+    public ResponseEntity<String> deleteArticle(
+            @PathVariable int articleId,
+            @PathVariable int userId
+    ) {
+        try {
+            String result = articleService.DeleteArticle(articleId, userId);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
