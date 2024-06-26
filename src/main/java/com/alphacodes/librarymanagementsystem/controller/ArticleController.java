@@ -3,10 +3,13 @@ package com.alphacodes.librarymanagementsystem.controller;
 import com.alphacodes.librarymanagementsystem.DTO.ArticleDto;
 import com.alphacodes.librarymanagementsystem.DTO.ArticleViewDto;
 import com.alphacodes.librarymanagementsystem.Model.Article;
+import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.ArticleService;
+import com.alphacodes.librarymanagementsystem.util.ImageUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,9 +17,11 @@ import java.util.List;
 @RequestMapping("/article")
 public class ArticleController {
     private final ArticleService articleService;
+    private final UserRepository userRepository;
 
-    public ArticleController(ArticleService articleService) {
+    public ArticleController(ArticleService articleService, UserRepository userRepository) {
         this.articleService = articleService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/add")
@@ -83,6 +88,37 @@ public class ArticleController {
     @GetMapping("getByUserID/{userId}")
     public List<ArticleViewDto> getArticleByUserId(@PathVariable int userId) {
         return articleService.getArticleByUserId(userId);
+    }
+
+    @PostMapping("/addArticle")
+    public ResponseEntity<ArticleDto> addArticle(
+            @RequestParam  String title,
+            @RequestParam  String body,
+            @RequestParam  int authorId,
+            @RequestParam MultipartFile articleImg
+    ) {
+        try {
+            ArticleDto article = new ArticleDto();
+
+            article.setTitle(title);
+            article.setBody(body);
+            article.setUserID(authorId);
+
+            if (articleImg != null) {
+
+                //article.setArticleImg(articleImg.getBytes());
+                // use image utils
+                article.setArticleImg(ImageUtils.compressBytes(articleImg.getBytes()));
+            } else {
+                article.setArticleImg(null);
+            }
+
+
+            ArticleDto addedArticle = articleService.addArticle(article);
+            return ResponseEntity.ok(addedArticle);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }
