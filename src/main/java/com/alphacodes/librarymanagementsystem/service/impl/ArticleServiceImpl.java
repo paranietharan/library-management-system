@@ -123,6 +123,31 @@ public class ArticleServiceImpl implements ArticleService {
         return articles.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    @Override
+    public ArticleDto editArticle(ArticleDto articleDto, int articleId) {
+        Optional<Article> existingArticle = articleRepository.findById(articleId);
+
+        if (existingArticle.isPresent()) {
+            Article updatedArticle = existingArticle.get();
+
+            // Update article fields
+            updatedArticle.setTitle(articleDto.getTitle());
+            updatedArticle.setBody(articleDto.getBody());
+
+            // Handle image update
+            if (articleDto.getArticleImg() != null) {
+                updatedArticle.setArticleImg(articleDto.getArticleImg()); // Ensure no additional compression here
+            }
+
+            // Save the updated article
+            articleRepository.save(updatedArticle);
+
+            return mapToArticleDto(updatedArticle);
+        } else {
+            throw new RuntimeException("Article not found with id " + articleId);
+        }
+    }
+
     private ArticleViewDto convertToDto(Article article) {
         ArticleViewDto dto = new ArticleViewDto();
         dto.setArticleID(article.getArticleId());

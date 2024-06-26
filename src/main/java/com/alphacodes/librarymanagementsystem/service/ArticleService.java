@@ -22,4 +22,6 @@ public interface ArticleService {
     Article getArticleFullById(int articleId);
     // get article by passing author id
     List<ArticleViewDto> getArticleByUserId(int userId);
+    // Method for edit articles
+    ArticleDto editArticle(ArticleDto article, int articleId);
 }

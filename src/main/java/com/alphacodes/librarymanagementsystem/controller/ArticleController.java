@@ -121,4 +121,30 @@ public class ArticleController {
         }
     }
 
+    // TODO: Edit article endpoint
+    @PutMapping("/editArticle/{articleId}")
+    public ResponseEntity<ArticleDto> editArticle(
+            // Path variable from URL
+            @PathVariable int articleId,
+
+            // Parameters from form data
+            @RequestParam String title,
+            @RequestParam String body,
+            @RequestParam int authorId,
+            @RequestParam MultipartFile articleImg
+    ) {
+        try {
+            ArticleDto article = new ArticleDto();
+            article.setTitle(title);
+            article.setBody(body);
+            article.setUserID(authorId);
+            article.setArticleImg(articleImg.getBytes()); // Ensure correct handling of MultipartFile
+
+            ArticleDto editedArticle = articleService.editArticle(article, articleId);
+            return ResponseEntity.ok(editedArticle);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

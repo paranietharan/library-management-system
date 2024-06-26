@@ -21,6 +21,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     int userID;
+
     String firstName;
     String lastName;
     String phoneNumber;
