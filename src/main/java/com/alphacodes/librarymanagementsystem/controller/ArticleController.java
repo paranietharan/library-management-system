@@ -131,14 +131,20 @@ public class ArticleController {
             @RequestParam String title,
             @RequestParam String body,
             @RequestParam int authorId,
-            @RequestParam MultipartFile articleImg
+            @RequestParam(required = false) MultipartFile articleImg
     ) {
         try {
             ArticleDto article = new ArticleDto();
             article.setTitle(title);
             article.setBody(body);
             article.setUserID(authorId);
-            article.setArticleImg(articleImg.getBytes()); // Ensure correct handling of MultipartFile
+
+            if (articleImg != null) {
+                article.setArticleImg(articleImg.getBytes()); // Ensure correct handling of MultipartFile
+            } else {
+                System.out.println("Image null in edit article");
+                article.setArticleImg(null);
+            }
 
             ArticleDto editedArticle = articleService.editArticle(article, articleId);
             return ResponseEntity.ok(editedArticle);
@@ -159,4 +165,9 @@ public class ArticleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    //TODO: Search Articles By heading
+    //TODO: Search Articles By author
+    //TODO: Search Articles By date
+    //TODO: Search Articles by content
 }

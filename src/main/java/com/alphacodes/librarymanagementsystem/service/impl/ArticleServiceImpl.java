@@ -143,6 +143,8 @@ public class ArticleServiceImpl implements ArticleService {
             // Handle image update
             if (articleDto.getArticleImg() != null) {
                 updatedArticle.setArticleImg(articleDto.getArticleImg()); // Ensure no additional compression here
+            } else {
+                updatedArticle.setArticleImg(null); // Assuming null is acceptable for your use case
             }
 
             // Save the updated article
