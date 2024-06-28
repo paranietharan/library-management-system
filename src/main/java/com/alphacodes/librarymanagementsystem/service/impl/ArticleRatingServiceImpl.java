@@ -32,8 +32,9 @@ public class ArticleRatingServiceImpl implements ArticleRatingService {
     public RatingDto addOrUpdateArticleRating(int articleID, RatingDto ratingDto) {
         Article article = articleRepository.findById(articleID).orElseThrow(
                 () -> new RuntimeException("Article not found with id " + articleID));
-        User user = userRepository.findById(ratingDto.getUserID()).orElseThrow(
-                () -> new RuntimeException("User not found with id " + ratingDto.getUserID()));
+
+        // get user details
+        User user = userRepository.findByUserID(ratingDto.getUserID());
 
         Optional<ArticleRating> existingRating = articleRatingRepository.findByArticleAndCommenter(article, user);
         ArticleRating articleRating;
@@ -56,12 +57,11 @@ public class ArticleRatingServiceImpl implements ArticleRatingService {
     public float getArticleRating(int articleID) {return calculateArticleRating(articleID);}
 
     @Override
-    public float getArticleRatingByUserId(int articleID, int userId) {
+    public float getArticleRatingByUserId(int articleID, String userId) {
         Optional<ArticleRating> optionalRating = articleRatingRepository.findByArticleAndCommenter(
                 articleRepository.findById(articleID).orElseThrow(
                         () -> new RuntimeException("Article not found with id " + articleID)),
-                userRepository.findById(userId).orElseThrow(
-                        () -> new RuntimeException("User not found with id " + userId)));
+                userRepository.findByUserID(userId));
 
         if (optionalRating.isPresent()) {
             ArticleRating articleRating = optionalRating.get();

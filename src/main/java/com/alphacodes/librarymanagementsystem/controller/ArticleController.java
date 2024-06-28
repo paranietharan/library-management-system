@@ -86,7 +86,7 @@ public class ArticleController {
     }
 
     @GetMapping("getByUserID/{userId}")
-    public List<ArticleViewDto> getArticleByUserId(@PathVariable int userId) {
+    public List<ArticleViewDto> getArticleByUserId(@PathVariable String userId) {
         return articleService.getArticleByUserId(userId);
     }
 
@@ -94,7 +94,7 @@ public class ArticleController {
     public ResponseEntity<ArticleDto> addArticle(
             @RequestParam  String title,
             @RequestParam  String body,
-            @RequestParam  int authorId,
+            @RequestParam  String authorId,
             @RequestParam MultipartFile articleImg
     ) {
         try {
@@ -130,7 +130,7 @@ public class ArticleController {
             // Parameters from form data
             @RequestParam String title,
             @RequestParam String body,
-            @RequestParam int authorId,
+            @RequestParam String authorId,
             @RequestParam(required = false) MultipartFile articleImg
     ) {
         try {
@@ -156,7 +156,7 @@ public class ArticleController {
     @DeleteMapping("{userId}/delete/{articleId}")
     public ResponseEntity<String> deleteArticle(
             @PathVariable int articleId,
-            @PathVariable int userId
+            @PathVariable String userId
     ) {
         try {
             String result = articleService.DeleteArticle(articleId, userId);

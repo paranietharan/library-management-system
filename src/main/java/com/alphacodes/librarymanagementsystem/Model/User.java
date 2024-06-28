@@ -23,6 +23,11 @@ public class User {
     String lastName;
     String phoneNumber;
     String emailAddress;
+
+    @Lob
+    @Column(name = "profile_img", columnDefinition = "LONGBLOB")
+    private byte[] profileImg;
+
     String password;
 
     @Enumerated(EnumType.STRING)

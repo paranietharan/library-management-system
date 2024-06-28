@@ -29,7 +29,7 @@ public class ArticleRatingController {
 
     // Get article rating by user Id and article Id
     @GetMapping("/{articleID}/rating/{userId}")
-    public ResponseEntity<Float> getArticleRatingByUserId(@PathVariable int articleID, @PathVariable int userId) {
+    public ResponseEntity<Float> getArticleRatingByUserId(@PathVariable int articleID, @PathVariable String userId) {
         try {
             float rating = articleRatingService.getArticleRatingByUserId(articleID, userId);
             return ResponseEntity.ok(rating);

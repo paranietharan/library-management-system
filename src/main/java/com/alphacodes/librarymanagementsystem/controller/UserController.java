@@ -1,6 +1,7 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
 import com.alphacodes.librarymanagementsystem.DTO.LoginResponse;
+import com.alphacodes.librarymanagementsystem.DTO.UserProfileDto;
 import com.alphacodes.librarymanagementsystem.DTO.UserSaveRequest;
 import com.alphacodes.librarymanagementsystem.DTO.UserSaveResponse;
 import com.alphacodes.librarymanagementsystem.Model.Student;
@@ -70,4 +71,17 @@ public class UserController {
             return otpService.verifyOTP(user.getEmailAddress(), otp);
     }
 
+    // Get user profile
+    @GetMapping("/getUserProfile/{id}")
+    public ResponseEntity<UserProfileDto> getUserProfile(@PathVariable String id) {
+        System.out.println("Received request to get profile for userID: " + id);
+        UserProfileDto userProfileDto = userService.getUserProfileById(id);
+
+        // If user profile is not found return 404
+        if (userProfileDto == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(userProfileDto);
+    }
 }

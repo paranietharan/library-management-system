@@ -21,9 +21,9 @@ public interface ArticleService {
 
     Article getArticleFullById(int articleId);
     // get article by passing author id
-    List<ArticleViewDto> getArticleByUserId(int userId);
+    List<ArticleViewDto> getArticleByUserId(String userId);
     // Method for edit articles
     ArticleDto editArticle(ArticleDto article, int articleId);
     // Method for delete articles
-    String DeleteArticle(int articleId, int userId);
+    String DeleteArticle(int articleId, String userId);
 }

@@ -11,5 +11,5 @@ import java.util.List;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
-    List<Article> findByAuthor_UserID(int userId);
+    List<Article> findByAuthor_UserID(String userId);
 }

@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class ArticleCommentDto {
     String comment;
-    int commenterId;
+    String commenterId;
     int articleId;
 }

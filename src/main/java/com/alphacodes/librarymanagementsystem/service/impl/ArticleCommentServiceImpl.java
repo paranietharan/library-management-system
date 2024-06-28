@@ -36,8 +36,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         articleComment.setComment(articleCommentDto.getComment());
 
         // set commenter
-        User commenter = userRepository.findById(articleCommentDto.getCommenterId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User commenter = userRepository.findByUserID(articleCommentDto.getCommenterId());
         articleComment.setCommenter(commenter);
 
         // set article

@@ -1,6 +1,7 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.LoginResponse;
+import com.alphacodes.librarymanagementsystem.DTO.UserProfileDto;
 import com.alphacodes.librarymanagementsystem.DTO.UserSaveRequest;
 import com.alphacodes.librarymanagementsystem.DTO.UserSaveResponse;
 import com.alphacodes.librarymanagementsystem.EmailService.EmailServiceImpl;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -87,6 +89,18 @@ public class UserServiceImpl implements UserService{
         return true;
     }
 
+    @Override
+    public UserProfileDto getUserProfileById(String id) {
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByUserID(id));
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return mapToUserProfileDto(user);
+        } else {
+            return null;
+        }
+    }
+
     public User mapToUser(UserSaveRequest userSaveRequest) {
         User user = new User();
         user.setFirstName(userSaveRequest.getFirstName());
@@ -107,5 +121,14 @@ public class UserServiceImpl implements UserService{
         return userSaveResponse;
     }
 
+    private UserProfileDto mapToUserProfileDto(User user) {
+        UserProfileDto userProfileDto = new UserProfileDto();
+        userProfileDto.setFirstName(user.getFirstName());
+        userProfileDto.setLastName(user.getLastName());
+        userProfileDto.setRole(user.getRole());
+        userProfileDto.setProfileImg(user.getProfileImg());
+        userProfileDto.setUserID(user.getUserID());
+        return userProfileDto;
+    }
 
 }
