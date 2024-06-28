@@ -57,8 +57,7 @@ public class ResourceRatingServiceImpl implements ResourceRatingService {
 
     private ResourceRating convertToResourceRating(RatingDto ratingDto) {
         ResourceRating resourceRating = new ResourceRating();
-        resourceRating.setMember(userRepository.findById(ratingDto.getUserID()).orElseThrow(
-            () -> new RuntimeException("User not found with id " + ratingDto.getUserID())));
+        resourceRating.setMember(userRepository.findByUserID(ratingDto.getUserID()));
         resourceRating.setRating(ratingDto.getRating());
         return resourceRating;
     }

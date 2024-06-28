@@ -7,6 +7,7 @@ import com.alphacodes.librarymanagementsystem.service.ResourceService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,5 +96,11 @@ public class ResourceServiceImpl implements ResourceService {
         resource.setTitle(resourceDto.getTitle());
         resource.setAvailability(resourceDto.getAvailability());
         return resource;
+    }
+
+    // Code for get resource count - aka avilability
+    public Integer getAvailability(Long resourceId) {
+        Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
+        return resourceOpt.map(Resource::getAvailability).orElse(null);
     }
 }

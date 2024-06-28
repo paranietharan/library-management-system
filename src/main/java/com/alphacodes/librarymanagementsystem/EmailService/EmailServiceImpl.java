@@ -1,6 +1,5 @@
-package com.alphacodes.librarymanagementsystem.service.impl;
+package com.alphacodes.librarymanagementsystem.EmailService;
 
-import com.alphacodes.librarymanagementsystem.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmailServiceImpl implements EmailService {
+public class EmailServiceImpl {
 
     @Autowired
     private JavaMailSender mailSender;
@@ -29,5 +28,14 @@ public class EmailServiceImpl implements EmailService {
         } catch (MessagingException e) {
             e.printStackTrace(); // or handle it in a better way
         }
+    }
+
+    // Send OTP to the user
+    public void sendOTP(String to, String otp) {
+        sendSimpleEmail(
+                to,
+                "Your OTP Code",
+                "Your OTP code is: " + otp
+        );
     }
 }

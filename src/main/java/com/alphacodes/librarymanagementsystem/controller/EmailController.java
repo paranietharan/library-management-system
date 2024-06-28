@@ -1,6 +1,6 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
-import com.alphacodes.librarymanagementsystem.service.impl.EmailServiceImpl;
+import com.alphacodes.librarymanagementsystem.EmailService.EmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

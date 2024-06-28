@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +17,8 @@ public class Fine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fineId;
     private double amount;
-    private String status;
+    private boolean paidStatus;
+    private Date resourceIssueDate;
 
     @ManyToOne
     @JoinColumn(name = "member", nullable = false)

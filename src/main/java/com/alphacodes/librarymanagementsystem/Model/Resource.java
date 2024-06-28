@@ -35,4 +35,3 @@ public class Resource {
     private Set<ResourceRating> resourceRatings = new HashSet<>();
 
 }
-
