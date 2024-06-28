@@ -34,41 +34,6 @@ public class ArticleController {
         }
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<ArticleDto>> getAllArticles() {
-        try {
-            List<ArticleDto> articles = articleService.getAllArticles();
-            return ResponseEntity.ok(articles);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/{articleID}")
-    public ResponseEntity<ArticleDto> getArticleById(@PathVariable int articleID) {
-        try {
-            ArticleDto article = articleService.getArticleById(articleID);
-            return ResponseEntity.ok(article);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @DeleteMapping("/{articleID}")
-    public ResponseEntity<String> deleteArticle(@PathVariable int articleID) {
-        try {
-            String result = articleService.deleteArticle(articleID);
-            return ResponseEntity.ok(result);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-
     // for article view dto
     @GetMapping("/allArticles")
     public List<ArticleViewDto> getAllArticleView() {
@@ -167,6 +132,16 @@ public class ArticleController {
     }
 
     //TODO: Search Articles By heading
+    @GetMapping("/search/heading/{heading}")
+    public ResponseEntity<List<ArticleViewDto>> searchArticleByHeading(@PathVariable String heading) {
+        try {
+            List<ArticleViewDto> articles = articleService.searchArticleByHeading(heading);
+            return ResponseEntity.ok(articles);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     //TODO: Search Articles By author
     //TODO: Search Articles By date
     //TODO: Search Articles by content

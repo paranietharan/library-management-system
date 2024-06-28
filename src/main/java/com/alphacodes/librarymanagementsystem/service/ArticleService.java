@@ -10,10 +10,6 @@ import java.util.List;
 @Service
 public interface ArticleService {
      ArticleDto addArticle(ArticleDto articleDto);
-     String deleteArticle(int articleID);
-     ArticleDto getArticleById(int articleID);
-     List<ArticleDto> getAllArticles();
-
 
     // For article view dto
     List<ArticleViewDto> getAllArticleView();
@@ -26,4 +22,8 @@ public interface ArticleService {
     ArticleDto editArticle(ArticleDto article, int articleId);
     // Method for delete articles
     String DeleteArticle(int articleId, String userId);
+
+    // Seacrch articles
+    // Method for searching articles by heading
+    List<ArticleViewDto> searchArticleByHeading(String heading);
 }

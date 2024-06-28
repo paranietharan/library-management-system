@@ -12,4 +12,8 @@ import java.util.List;
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
     List<Article> findByAuthor_UserID(String userId);
+
+    // search article that titles mathces the words in the heading
+    @Query("SELECT a FROM Article a WHERE a.title LIKE %:heading%")
+    List<Article> findByTitleContaining(String heading);
 }

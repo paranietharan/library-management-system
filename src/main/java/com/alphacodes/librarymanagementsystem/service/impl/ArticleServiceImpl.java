@@ -45,26 +45,6 @@ public class ArticleServiceImpl implements ArticleService {
         }
     }
 
-
-    @Override
-    public String deleteArticle(int articleID) {
-        articleRepository.deleteById(articleID);
-        return "Article deleted Successfully";
-    }
-
-    @Override
-    public ArticleDto getArticleById(int articleID) {
-        Article article = articleRepository.findById(articleID).
-                orElseThrow(() -> new RuntimeException("Article not found with id " + articleID));
-        return mapToArticleDto(article);
-    }
-
-    @Override
-    public List<ArticleDto> getAllArticles() {
-        List<Article> articles = articleRepository.findAll();
-        return articles.stream().map(this::mapToArticleDto).collect(Collectors.toList());
-    }
-
     private ArticleDto mapToArticleDto(Article article) {
         ArticleDto articleDto = new ArticleDto();
 
@@ -189,6 +169,14 @@ public class ArticleServiceImpl implements ArticleService {
         } else {
             throw new RuntimeException("Article not found with id " + articleId);
         }
+    }
+
+    @Override
+    public List<ArticleViewDto> searchArticleByHeading(String heading) {
+        // return the articles that contains the words in the heading
+        List<Article> articles = articleRepository.findByTitleContaining(heading);
+
+        return articles.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     private ArticleViewDto convertToDto(Article article) {
