@@ -56,8 +56,7 @@ public class ComplaintServiceImpl implements ComplaintService {
 
     private Complaint mapToComplaint(ComplaintDto complaintDto) {
         Complaint complaint = new Complaint();
-        complaint.setMember(userRepository.findById(complaintDto.getUserID()).orElseThrow(
-                () -> new RuntimeException("User not found with id " + complaintDto.getUserID())));
+        complaint.setMember(userRepository.findByUserID(complaintDto.getUserID()));
         complaint.setComplaint(complaintDto.getComplaint());
         return complaint;
     }

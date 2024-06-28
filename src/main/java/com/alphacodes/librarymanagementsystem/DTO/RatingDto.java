@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class RatingDto {
-    private int userID;
+    private String userID;
     private float rating;
 }

@@ -1,8 +1,7 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
-import com.alphacodes.librarymanagementsystem.service.impl.EmailServiceImpl;
-import com.alphacodes.librarymanagementsystem.service.impl.OTPServiceImpl;
-import com.alphacodes.librarymanagementsystem.util.OTPGenerator;
+import com.alphacodes.librarymanagementsystem.EmailService.EmailServiceImpl;
+import com.alphacodes.librarymanagementsystem.OTPservice.OTPServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,8 @@ public class OTPController {
     // Generate OTP
     @PostMapping("/generate")
     public String generateOTP(@RequestParam String email) {
-        String otp = OTPGenerator.generateOTP();
+        OTPServiceImpl otpService = new OTPServiceImpl();
+        String otp = otpService.generateOTP(email);
         otpService.storeOTP(email, otp);
         emailService.sendOTP(email, otp);
         return "OTP sent to your email";

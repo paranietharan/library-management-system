@@ -18,19 +18,12 @@ import java.util.Set;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    int userID;
-
+    String userID;
     String firstName;
     String lastName;
     String phoneNumber;
     String emailAddress;
     String password;
-
-    @Lob
-    @Column(name = "profile_img", columnDefinition = "LONGBLOB")
-    private byte[] profileImg;
 
     @Enumerated(EnumType.STRING)
     Role role;
