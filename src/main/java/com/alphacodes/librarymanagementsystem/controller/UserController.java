@@ -59,24 +59,15 @@ public class UserController {
     }
 
     @PostMapping("/changePassword")
-        public ResponseEntity<String> changePassword(@RequestBody String email, String password) {
-            User user1 = userRepository.findByEmailAddress(email);
-              if (user1 == null) {
-                return ResponseEntity.ok("User not found");
-              }
-            userService.changePassword(email, password);
-            return ResponseEntity.ok("Password changed successfully");
+        public Boolean changePassword(@RequestBody String email, String password) {
+            return userService.changePassword(email, password);
     }
 
     @PostMapping("/verifyOTP")
-        public ResponseEntity<String> verifyOTP(@RequestBody String email, String otp) {
-           User user = userRepository.findByEmailAddress(email);
-        OTPServiceImpl otpService = new OTPServiceImpl();
-           if(otpService.verifyOTP(user.getEmailAddress(), otp))
-           {
-               return ResponseEntity.ok("OTP verified successfully");
-           }
-           return ResponseEntity.ok("OTP not verified");
+        public Boolean verifyOTP(@RequestBody String email, String otp) {
+            User user = userRepository.findByEmailAddress(email);
+            OTPServiceImpl otpService = new OTPServiceImpl();
+            return otpService.verifyOTP(user.getEmailAddress(), otp);
     }
 
 }
