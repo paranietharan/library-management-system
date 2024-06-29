@@ -82,19 +82,29 @@ public class ResourceServiceImpl implements ResourceService {
 
     private ResourceDto convertToResourceDto(Resource resource){
         ResourceDto resourceDto = new ResourceDto();
+
         resourceDto.setAuthor(resource.getAuthor());
         resourceDto.setCategory(resource.getCategory());
         resourceDto.setTitle(resource.getTitle());
         resourceDto.setAvailability(resource.getAvailability());
+        resourceDto.setAbout(resource.getAbout());
+        resourceDto.setBookImg(resource.getBookImg());
+        resourceDto.setResourceId(resource.getResourceId());
+
         return resourceDto;
     }
 
     private Resource convertToResource(ResourceDto resourceDto){
         Resource resource = new Resource();
+
+        resource.setResourceId(resourceDto.getResourceId());
         resource.setAuthor(resourceDto.getAuthor());
         resource.setCategory(resourceDto.getCategory());
         resource.setTitle(resourceDto.getTitle());
         resource.setAvailability(resourceDto.getAvailability());
+        resource.setAbout(resourceDto.getAbout());
+        resource.setBookImg(resourceDto.getBookImg());
+
         return resource;
     }
 

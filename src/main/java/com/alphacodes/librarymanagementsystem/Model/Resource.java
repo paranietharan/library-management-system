@@ -11,16 +11,19 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
 public class Resource {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long resourceId;
-    private String title;
-    private String author;
-    private Integer availability;
-    private String category;
+    private String resourceId;// ISBN
+    private String title;// Book Nme
+    private String author;// Author name
+    private Integer availability;// Avilable copies
+    private String about;// Description
+    private String category;// Book category
+
+    @Lob
+    @Column(name = "book_img", columnDefinition = "LONGBLOB")
+    private byte[] bookImg;
 
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Issue issue;
