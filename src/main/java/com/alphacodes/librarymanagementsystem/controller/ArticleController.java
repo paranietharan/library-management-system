@@ -1,8 +1,10 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
 import com.alphacodes.librarymanagementsystem.DTO.ArticleDto;
+import com.alphacodes.librarymanagementsystem.DTO.ArticleHomeDto;
 import com.alphacodes.librarymanagementsystem.DTO.ArticleViewDto;
 import com.alphacodes.librarymanagementsystem.Model.Article;
+import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.ArticleService;
 import com.alphacodes.librarymanagementsystem.util.ImageUtils;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/article")
@@ -131,18 +134,25 @@ public class ArticleController {
         }
     }
 
-    //TODO: Search Articles By heading
+    // Serach articles
     @GetMapping("/search/heading/{heading}")
-    public ResponseEntity<List<ArticleViewDto>> searchArticleByHeading(@PathVariable String heading) {
+    public ResponseEntity<List<ArticleHomeDto>> searchArticleByHeading(@PathVariable String heading) {
         try {
-            List<ArticleViewDto> articles = articleService.searchArticleByHeading(heading);
+            List<ArticleHomeDto> articles = articleService.searchArticleByHeading(heading);
             return ResponseEntity.ok(articles);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    //TODO: Search Articles By author
-    //TODO: Search Articles By date
-    //TODO: Search Articles by content
+
+    @GetMapping("/search/body/{body}")
+    public ResponseEntity<List<ArticleHomeDto>> searchArticleByBody(@PathVariable String body) {
+        try {
+            List<ArticleHomeDto> articles = articleService.searchArticleByBody(body);
+            return ResponseEntity.ok(articles);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

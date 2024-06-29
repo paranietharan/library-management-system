@@ -16,4 +16,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     // search article that titles mathces the words in the heading
     @Query("SELECT a FROM Article a WHERE a.title LIKE %:heading%")
     List<Article> findByTitleContaining(String heading);
+    // search article that body mathces the words in the body
+    @Query("SELECT a FROM Article a WHERE a.body LIKE %:body%")
+    List<Article> findByBodyContaining(String body);
 }
