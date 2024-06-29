@@ -58,20 +58,53 @@ public class ResourceController {
 
     // Get a resource by its ID
     @GetMapping("/get/{resourceId}")
-    public ResponseEntity<ResourceDto> getResourceById(@PathVariable Long resourceId) {
+    public ResponseEntity<ResourceDto> getResourceById(@PathVariable String resourceId) {
         ResourceDto resourceDto = resourceService.getResourceById(resourceId);
         return new ResponseEntity<>(resourceDto, HttpStatus.OK);
     }
 
     // Delete a resource by its ID
     @DeleteMapping("/delete/{resourceId}")
-    public ResponseEntity<String> deleteResource(@PathVariable Long resourceId) {
+    public ResponseEntity<String> deleteResource(@PathVariable String resourceId) {
         return new ResponseEntity<>(resourceService.deleteResource(resourceId),HttpStatus.NO_CONTENT);
     }
 
     // Update a resource by its ID
     @PutMapping("/update/{resourceId}")
-    public ResponseEntity<ResourceDto> updateResource(@PathVariable Long resourceId, @RequestBody ResourceDto resourceDto) {
+    public ResponseEntity<ResourceDto> updateResource(
+            // Get resource id from the path
+            @PathVariable String resourceId,
+
+            // Get the resource details from the request body
+            @RequestParam String ISBN,// useful when updating the resource ID
+            @RequestParam String title,
+            @RequestParam String author,
+            @RequestParam Integer availability,
+            @RequestParam String category,
+            @RequestParam String about,
+            @RequestParam(required = false) MultipartFile bookImg
+    ) {
+        ResourceDto resourceDto = new ResourceDto();
+
+        // Set the resource details
+        resourceDto.setTitle(title);
+        resourceDto.setAuthor(author);
+        resourceDto.setAvailability(availability);
+        resourceDto.setCategory(category);
+        resourceDto.setAbout(about);
+        resourceDto.setResourceId(ISBN);
+
+        // Set the resource image
+        if(bookImg != null) {
+            try {
+                resourceDto.setBookImg(ImageUtils.compressBytes(bookImg.getBytes()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else {
+            resourceDto.setBookImg(null);
+        }
+
         return new ResponseEntity<>(resourceService.updateResource(resourceId, resourceDto), HttpStatus.OK);
     }
 
@@ -83,8 +116,9 @@ public class ResourceController {
 
     // Get all resources by category
     @GetMapping("/get/category/{category}")
-    public List<ResourceDto> getResourcesByCategory(@PathVariable String category) {
-        return resourceService.getResourcesByCategory(category);
+    public ResponseEntity<List<ResourceDto>> getResourcesByCategory(@PathVariable String category) {
+        List<ResourceDto> resourceDto = resourceService.getResourcesByCategory(category);
+        return new ResponseEntity<>(resourceDto, HttpStatus.OK);
     }
 
     // Get all resources by author

@@ -33,34 +33,42 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public ResourceDto getResourceById(Long resourceId) {
-        Resource resource = resourceRepository.findById(resourceId).orElseThrow(
-                () -> new RuntimeException("Resource not found with id " + resourceId));
+    public ResourceDto getResourceById(String resourceId) {
+        Resource resource = resourceRepository.findByResourceId(resourceId);
         return convertToResourceDto(resource);
     }
 
     @Override
-    public String deleteResource(Long resourceId) {
-        Resource resource = resourceRepository.findById(resourceId).orElseThrow(
-                () -> new RuntimeException("Resource not found with id " + resourceId));
+    public String deleteResource(String resourceId) {
+        Resource resource = resourceRepository.findByResourceId(resourceId);
         resourceRepository.delete(resource);
         return "Resource deleted Successfully";
     }
 
     @Override
-    public ResourceDto updateResource(Long resourceId, ResourceDto resourceDto) {
-        Resource resource = resourceRepository.findById(resourceId).orElseThrow(
-                () -> new RuntimeException("Resource not found with id " + resourceId));
+    public ResourceDto updateResource(String resourceId, ResourceDto resourceDto) {
+        Resource resource = resourceRepository.findByResourceId(resourceId);
+
+        // Check if the resource exists
+        if(resource == null) {
+            return null;
+        }
+
+        resource.setResourceId(resourceDto.getResourceId());
         resource.setAuthor(resourceDto.getAuthor());
         resource.setCategory(resourceDto.getCategory());
         resource.setTitle(resourceDto.getTitle());
         resource.setAvailability(resourceDto.getAvailability());
+        resource.setAbout(resourceDto.getAbout());
+        resource.setBookImg(resourceDto.getBookImg());
+
         Resource updatedResource = resourceRepository.save(resource);
+
         return convertToResourceDto(updatedResource);
     }
 
     public List<ResourceDto> searchResource(String keyword) {
-        List<Resource> resources = resourceRepository.findByTitle(keyword);
+        List<Resource> resources = resourceRepository.findByTitleMatchKeyword(keyword);
         return resources.stream().map(this::convertToResourceDto).collect(Collectors.toList());
     }
 
@@ -70,7 +78,8 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     public List<ResourceDto> getResourcesByAuthor(String author) {
-        List<Resource> resources = resourceRepository.findByAuthor(author);
+        List<Resource> resources = resourceRepository.findByKeywordRelatedAuthors(author);
+
         return resources.stream().map(this::convertToResourceDto).collect(Collectors.toList());
     }
 
