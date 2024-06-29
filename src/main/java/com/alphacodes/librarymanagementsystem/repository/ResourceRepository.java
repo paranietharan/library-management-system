@@ -12,14 +12,12 @@ import java.util.List;
 public interface ResourceRepository extends JpaRepository<Resource, Long>{
     List<Resource> findByCategory(String category);
     List<Resource> findByTitle(String title);
-    List<Resource> findByAuthor(String author);
-
-
-    Resource findByResourceId(String resourceId);
 
     @Query("SELECT r FROM Resource r WHERE r.title LIKE %:keyword%")
     List<Resource> findByTitleMatchKeyword(@Param("keyword") String keyword);
 
     @Query("SELECT r FROM Resource r WHERE r.author LIKE %:author%")
     List<Resource> findByKeywordRelatedAuthors(@Param("author") String author);
+
+    Resource findByIsbn(String isbn);
 }

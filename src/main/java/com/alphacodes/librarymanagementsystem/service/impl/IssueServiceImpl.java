@@ -47,12 +47,12 @@ public class IssueServiceImpl implements IssueService {
             User librarian = librarianOpt.get();
 
             // Get resource availability count
-            Integer resourceCount = resource.getAvailability();
+            Integer resourceCount = resource.getNo_of_copies();
 
             // Check resource availability
             if (resourceCount > 0) {
                 // Decrease the availability count
-                resource.setAvailability(resourceCount - 1);
+                resource.setNo_of_copies(resourceCount - 1);
                 resourceRepository.save(resource);
 
                 // Create new Issue record
@@ -104,7 +104,7 @@ public class IssueServiceImpl implements IssueService {
                 issueRepository.delete(issue);
 
                 // Increase the availability count of the resource
-                resource.setAvailability(resource.getAvailability() + 1);
+                resource.setNo_of_copies(resource.getNo_of_copies() + 1);
                 resourceRepository.save(resource);
 
 

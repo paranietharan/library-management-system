@@ -1,6 +1,7 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
 import com.alphacodes.librarymanagementsystem.DTO.ResourceDto;
+import com.alphacodes.librarymanagementsystem.DTO.ResourceViewDto;
 import com.alphacodes.librarymanagementsystem.service.ResourceService;
 import com.alphacodes.librarymanagementsystem.util.ImageUtils;
 import org.springframework.http.HttpStatus;
@@ -23,21 +24,21 @@ public class ResourceController {
     // Add a new resource
     @PostMapping("/addResource")
     public ResponseEntity<ResourceDto> addResource(
-            @RequestParam String ISBN,
+            @RequestParam(required = false) String ISBN,
             @RequestParam String title,
             @RequestParam String author,
-            @RequestParam Integer availability,
+            @RequestParam Integer no_of_copies,
             @RequestParam String category,
             @RequestParam String about,
-            @RequestParam MultipartFile bookImg
+            @RequestParam(required = false) MultipartFile bookImg
     ) throws IOException {
 
         ResourceDto resourceDto = new ResourceDto();
 
-        resourceDto.setResourceId(ISBN);
+        resourceDto.setIsbn(ISBN);
         resourceDto.setTitle(title);
         resourceDto.setAuthor(author);
-        resourceDto.setAvailability(availability);
+        resourceDto.setNo_of_copies(no_of_copies);
         resourceDto.setCategory(category);
         resourceDto.setAbout(about);
 
@@ -52,20 +53,27 @@ public class ResourceController {
 
     // Get all resources
     @GetMapping("/all")
-    public List<ResourceDto> getAllResources() {
+    public List<ResourceViewDto> getAllResources() {
         return resourceService.getAllResources();
     }
 
+    // Get a resource by its ISBN
+    @GetMapping("/get/{isbn}")
+    public ResponseEntity<ResourceViewDto> getResourceByISBN(@PathVariable String isbn) {
+        ResourceViewDto resourceViewDto = resourceService.getResourceByISBN(isbn);
+        return new ResponseEntity<>(resourceViewDto, HttpStatus.OK);
+    }
+
     // Get a resource by its ID
-    @GetMapping("/get/{resourceId}")
-    public ResponseEntity<ResourceDto> getResourceById(@PathVariable String resourceId) {
-        ResourceDto resourceDto = resourceService.getResourceById(resourceId);
-        return new ResponseEntity<>(resourceDto, HttpStatus.OK);
+    @GetMapping("/get/id/{resourceId}")
+    public ResponseEntity<ResourceViewDto> getResourceById(@PathVariable Long resourceId) {
+        ResourceViewDto resourceViewDto = resourceService.getResourceById(resourceId);
+        return new ResponseEntity<>(resourceViewDto, HttpStatus.OK);
     }
 
     // Delete a resource by its ID
     @DeleteMapping("/delete/{resourceId}")
-    public ResponseEntity<String> deleteResource(@PathVariable String resourceId) {
+    public ResponseEntity<String> deleteResource(@PathVariable Long resourceId) {
         return new ResponseEntity<>(resourceService.deleteResource(resourceId),HttpStatus.NO_CONTENT);
     }
 
@@ -73,13 +81,13 @@ public class ResourceController {
     @PutMapping("/update/{resourceId}")
     public ResponseEntity<ResourceDto> updateResource(
             // Get resource id from the path
-            @PathVariable String resourceId,
+            @PathVariable Long resourceId,
 
             // Get the resource details from the request body
-            @RequestParam String ISBN,// useful when updating the resource ID
+            @RequestParam(required = false) String ISBN,// useful when updating the resource ID
             @RequestParam String title,
             @RequestParam String author,
-            @RequestParam Integer availability,
+            @RequestParam Integer no_of_copies,
             @RequestParam String category,
             @RequestParam String about,
             @RequestParam(required = false) MultipartFile bookImg
@@ -89,10 +97,10 @@ public class ResourceController {
         // Set the resource details
         resourceDto.setTitle(title);
         resourceDto.setAuthor(author);
-        resourceDto.setAvailability(availability);
+        resourceDto.setNo_of_copies(no_of_copies);
         resourceDto.setCategory(category);
         resourceDto.setAbout(about);
-        resourceDto.setResourceId(ISBN);
+        resourceDto.setIsbn(ISBN);
 
         // Set the resource image
         if(bookImg != null) {
@@ -110,27 +118,58 @@ public class ResourceController {
 
     // Search for a resource by keyword
     @GetMapping("/search")
-    public List<ResourceDto> searchResource(@RequestParam String keyword) {
-        return resourceService.searchResource(keyword);
+    public ResponseEntity<List<ResourceViewDto>> searchResource(@RequestParam String keyword) {
+        //return resourceService.searchResource(keyword);
+        List<ResourceViewDto> resourceDto = resourceService.searchResource(keyword);
+
+        if(resourceDto.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }else {
+            return new ResponseEntity<>(resourceDto, HttpStatus.OK);
+        }
     }
 
     // Get all resources by category
     @GetMapping("/get/category/{category}")
-    public ResponseEntity<List<ResourceDto>> getResourcesByCategory(@PathVariable String category) {
-        List<ResourceDto> resourceDto = resourceService.getResourcesByCategory(category);
-        return new ResponseEntity<>(resourceDto, HttpStatus.OK);
+    public ResponseEntity<List<ResourceViewDto>> getResourcesByCategory(@PathVariable String category) {
+        List<ResourceViewDto> resourceDto = resourceService.getResourcesByCategory(category);
+
+        if(resourceDto.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }else {
+            return new ResponseEntity<>(resourceDto, HttpStatus.OK);
+        }
     }
 
     // Get all resources by author
     @GetMapping("/get/author/{author}")
-    public List<ResourceDto> getResourcesByAuthor(@PathVariable String author) {
-        return resourceService.getResourcesByAuthor(author);
+    public ResponseEntity<List<ResourceViewDto>> getResourcesByAuthor(@PathVariable String author) {
+        //return resourceService.getResourcesByAuthor(author);
+        List<ResourceViewDto> resourceDto = resourceService.getResourcesByAuthor(author);
+
+        if(resourceDto.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }else {
+            return new ResponseEntity<>(resourceDto, HttpStatus.OK);
+        }
     }
 
     // Get all resources by title
     @GetMapping("/get/title/{title}")
-    public List<ResourceDto> getResourcesByTitle(@PathVariable String title) {
-        return resourceService.getResourcesByTitle(title);
+    public ResponseEntity<List<ResourceViewDto>> getResourcesByTitle(@PathVariable String title) {
+        //return resourceService.getResourcesByTitle(title);
+        List<ResourceViewDto> resourceDto = resourceService.getResourcesByTitle(title);
+
+        if(resourceDto.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }else {
+            return new ResponseEntity<>(resourceDto, HttpStatus.OK);
+        }
     }
 
+    // Get Book Availability
+    @GetMapping("/availability/{resourceId}")
+    public ResponseEntity<Integer> getAvailability(@PathVariable Long resourceId) {
+        return new ResponseEntity<>(resourceService.getAvailability(resourceId), HttpStatus.OK);
+    }
 }

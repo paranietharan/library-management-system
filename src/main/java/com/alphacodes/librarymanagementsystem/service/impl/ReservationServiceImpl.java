@@ -50,8 +50,8 @@ public class ReservationServiceImpl implements ReservationService {
                 Resource resource = resourceOpt.get();
                 User user = userOpt.get();
 
-                if (resource.getAvailability() > 0) {
-                    resource.setAvailability(resource.getAvailability() - 1);
+                if (resource.getNo_of_copies() > 0) {
+                    resource.setNo_of_copies(resource.getNo_of_copies() - 1);
                     resourceRepository.save(resource);
 
                     Reservation reservation = new Reservation();
@@ -79,7 +79,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         for (Reservation reservation : expiredReservations) {
             Resource resource = reservation.getBook();
-            resource.setAvailability(resource.getAvailability() + 1);
+            resource.setNo_of_copies(resource.getNo_of_copies() + 1);
             resourceRepository.save(resource);
 
             reservation.setStatus("Expired");

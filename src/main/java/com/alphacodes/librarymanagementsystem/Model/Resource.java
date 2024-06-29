@@ -14,10 +14,12 @@ import java.util.Set;
 @Entity
 public class Resource {
     @Id
-    private String resourceId;// ISBN
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String isbn;// ISBN
     private String title;// Book Nme
     private String author;// Author name
-    private Integer availability;// Avilable copies
+    private Integer no_of_copies;// Avilable copies
     private String about;// Description
     private String category;// Book category
 
