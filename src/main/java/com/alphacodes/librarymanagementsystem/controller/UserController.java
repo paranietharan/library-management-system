@@ -1,9 +1,6 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
-import com.alphacodes.librarymanagementsystem.DTO.LoginResponse;
-import com.alphacodes.librarymanagementsystem.DTO.UserProfileDto;
-import com.alphacodes.librarymanagementsystem.DTO.UserSaveRequest;
-import com.alphacodes.librarymanagementsystem.DTO.UserSaveResponse;
+import com.alphacodes.librarymanagementsystem.DTO.*;
 import com.alphacodes.librarymanagementsystem.Model.Student;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.OTPservice.OTPServiceImpl;
@@ -35,8 +32,11 @@ public class UserController {
        if (student != null
                && student.getEmailAddress().equals(userSaveRequest.getEmailAddress())
                && student.getPhoneNumber().equals(userSaveRequest.getPhoneNumber())) {
-              return new  ResponseEntity<>( userService.saveDetails(userSaveRequest, student), HttpStatus.CREATED);
+
+           System.out.println("Student: " + student.getFirstName());
+           return new  ResponseEntity<>( userService.saveDetails(userSaveRequest, student), HttpStatus.CREATED);
        }
+       System.out.println("Student not found");
         return null;
    }
 
@@ -46,8 +46,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-       public ResponseEntity<LoginResponse> login(@RequestBody String email, String password) {
-        return userService.performLogin(email, password);
+       public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        System.out.println("Received request to login user: " + loginRequest.getEmailAddress() + " " + loginRequest.getPassword());
+        return userService.performLogin(loginRequest);
    }
     @PostMapping("/forgotPassword")
         public Boolean forgotPassword(@RequestBody String email) {
@@ -55,8 +56,7 @@ public class UserController {
            if (user == null) {
                return false;
            }
-           userService.forgotPassword(email);
-           return true;
+           return userService.forgotPassword(email);
     }
 
     @PostMapping("/changePassword")

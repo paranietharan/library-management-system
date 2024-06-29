@@ -1,9 +1,6 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
-import com.alphacodes.librarymanagementsystem.DTO.LoginResponse;
-import com.alphacodes.librarymanagementsystem.DTO.UserProfileDto;
-import com.alphacodes.librarymanagementsystem.DTO.UserSaveRequest;
-import com.alphacodes.librarymanagementsystem.DTO.UserSaveResponse;
+import com.alphacodes.librarymanagementsystem.DTO.*;
 import com.alphacodes.librarymanagementsystem.EmailService.EmailServiceImpl;
 import com.alphacodes.librarymanagementsystem.JwtAuthenticationConfig.JWTauthentication;
 import com.alphacodes.librarymanagementsystem.Model.Student;
@@ -38,12 +35,15 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public ResponseEntity<LoginResponse> performLogin(String userEmailAddress, String password) {
-        User user = userRepository.findByEmailAddress(userEmailAddress);
+    public ResponseEntity<LoginResponse> performLogin(LoginRequest loginRequest) {
+        User user = userRepository.findByEmailAddress(loginRequest.getEmailAddress());
+        System.out.println("email" + loginRequest.getEmailAddress());
         if (user == null) {
             return new ResponseEntity<>(new LoginResponse("User not found", false, null), HttpStatus.NOT_FOUND);
         }
-        boolean isPasswordMatched = bCryptPasswordEncoder.matches(password, user.getPassword());
+        System.out.println("User: " + user.getFirstName());
+        System.out.println("Password: " + loginRequest.getPassword());
+        boolean isPasswordMatched = bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword());
         if (isPasswordMatched) {
             String token = jwtA.generateToken(user);
             return new ResponseEntity<>(new LoginResponse("Login Successful", true, token), HttpStatus.OK);
@@ -58,6 +58,8 @@ public class UserServiceImpl implements UserService{
         String encryptedPassword = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encryptedPassword);
         user.setRole(Role.MEMBER);
+       System.out.println("User: " + user.getFirstName());
+       System.out.println("Student: " + student.getFirstName());
         userRepository.save(user);
         return mapToUserSaveResponse(student);
     }
