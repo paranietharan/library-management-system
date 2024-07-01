@@ -8,11 +8,11 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface UserService {
-    UserSaveResponse saveDetails(UserSaveRequest userSaveRequest, Student student);
+    Boolean saveDetails(User user);
     List<User> getAllUserDetails();
     ResponseEntity<LoginResponse> performLogin(LoginRequest loginRequest);
-    boolean forgotPassword(String email);
-    boolean changePassword(String email, String password);
-
+    Boolean sendOtp(String email);
+    Boolean changePassword(String email, String password);
+    UserCheckResponse checkDetails(UserSaveRequest userSaveRequest);
     UserProfileDto getUserProfileById(String id);
 }

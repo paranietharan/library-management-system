@@ -1,7 +1,7 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.*;
-import com.alphacodes.librarymanagementsystem.EmailService.EmailServiceImpl;
+//import com.alphacodes.librarymanagementsystem.EmailService.EmailServiceImpl;
 import com.alphacodes.librarymanagementsystem.JwtAuthenticationConfig.JWTauthentication;
 import com.alphacodes.librarymanagementsystem.Model.Student;
 import com.alphacodes.librarymanagementsystem.Model.User;
@@ -51,17 +51,31 @@ public class UserServiceImpl implements UserService{
             return new ResponseEntity<>(new LoginResponse("Incorrect Password", false, null), HttpStatus.UNAUTHORIZED);
         }
     }
+    
+    @Override
+    public UserCheckResponse checkDetails(UserSaveRequest userSaveRequest) {
+        Student student = studentRepository.findByIndexNumber(userSaveRequest.getIndexNumber());
+        if (student != null
+                && student.getEmailAddress().equals(userSaveRequest.getEmailAddress())
+                && student.getPhoneNumber().equals(userSaveRequest.getPhoneNumber())) {
+
+            System.out.println("Student: " + student.getFirstName());
+            return mapToUserCheckResponse(student);
+        }
+        System.out.println("Student not found");
+        System.out.println("Student: " + userSaveRequest.getFirstName());
+        return null;
+    }
+
 
    @Override
-    public UserSaveResponse saveDetails(UserSaveRequest userSaveRequest, Student student) {
-        User user = mapToUser(userSaveRequest);
+    public Boolean saveDetails(User user) {
         String encryptedPassword = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encryptedPassword);
         user.setRole(Role.MEMBER);
-       System.out.println("User: " + user.getFirstName());
-       System.out.println("Student: " + student.getFirstName());
+        System.out.println("User: " + user.getFirstName());
         userRepository.save(user);
-        return mapToUserSaveResponse(student);
+        return true;
     }
     //TODO: return type
 
@@ -71,16 +85,18 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public boolean forgotPassword(String email) {
+    public Boolean sendOtp(String email) {
+        System.out.println("Email: " + email);
         OTPServiceImpl otpService = new OTPServiceImpl();
-        EmailServiceImpl emailService = new EmailServiceImpl();
+        //EmailServiceImpl emailService = new EmailServiceImpl();
         String otp = otpService.generateOTP(email);
-        emailService.sendOTP(email, otp);
+        //emailService.sendOTP(email, otp);
+        System.out.println("OTP: " + otp);
         return true;
     }
 
     @Override
-    public boolean changePassword(String email, String password) {
+    public Boolean changePassword(String email, String password) {
         User user = userRepository.findByEmailAddress(email);
         if (user == null) {
             return false;
@@ -103,24 +119,15 @@ public class UserServiceImpl implements UserService{
         }
     }
 
-    public User mapToUser(UserSaveRequest userSaveRequest) {
-        User user = new User();
-        user.setFirstName(userSaveRequest.getFirstName());
-        user.setLastName(userSaveRequest.getLastName());
-        user.setUserID(userSaveRequest.getIndexNumber());
-        user.setEmailAddress(userSaveRequest.getEmailAddress());
-        user.setPhoneNumber(userSaveRequest.getPhoneNumber());
-        user.setPassword(userSaveRequest.getPassword());
-        return user;
-    }
 
-    public UserSaveResponse mapToUserSaveResponse(Student student) {
-        UserSaveResponse userSaveResponse = new UserSaveResponse();
-        userSaveResponse.setFirstName(student.getFirstName());
-        userSaveResponse.setLastName(student.getLastName());
-        userSaveResponse.setDateOfBirth(student.getDateOfBirth());
-        userSaveResponse.setGrade(student.getGrade());
-        return userSaveResponse;
+
+    public UserCheckResponse mapToUserCheckResponse(Student student) {
+        UserCheckResponse userCheckResponse = new UserCheckResponse();
+        userCheckResponse.setFirstName(student.getFirstName());
+        userCheckResponse.setLastName(student.getLastName());
+        userCheckResponse.setDateOfBirth(student.getDateOfBirth());
+        userCheckResponse.setGrade(student.getGrade());
+        return userCheckResponse;
     }
 
     private UserProfileDto mapToUserProfileDto(User user) {

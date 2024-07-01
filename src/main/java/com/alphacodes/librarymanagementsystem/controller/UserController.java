@@ -1,10 +1,8 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
 import com.alphacodes.librarymanagementsystem.DTO.*;
-import com.alphacodes.librarymanagementsystem.Model.Student;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.OTPservice.OTPServiceImpl;
-import com.alphacodes.librarymanagementsystem.repository.StudentRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -18,25 +16,34 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
-    private final StudentRepository studentRepository;
 
-    public UserController(UserService userService, UserRepository userRepository, StudentRepository studentRepository) {
+
+    public UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
-        this.studentRepository = studentRepository;
+    }
+
+    @PostMapping("/checkDetails")
+        public UserCheckResponse checkDetails(@RequestBody UserSaveRequest userSaveRequest) {
+        return userService.checkDetails(userSaveRequest);
+    }
+
+    @PostMapping("/sendOtp")
+        public Boolean sendOtp(@RequestBody EmailDto emailDto) {
+        return userService.sendOtp(emailDto.getEmailAddress());
     }
 
    @PostMapping("/saveUser")
-        public ResponseEntity<UserSaveResponse> postDetails(@RequestBody UserSaveRequest userSaveRequest) {
-       Student student = studentRepository.findByIndexNumber(userSaveRequest.getIndexNumber());
-       if (student != null
-               && student.getEmailAddress().equals(userSaveRequest.getEmailAddress())
-               && student.getPhoneNumber().equals(userSaveRequest.getPhoneNumber())) {
-
-           System.out.println("Student: " + student.getFirstName());
-           return new  ResponseEntity<>( userService.saveDetails(userSaveRequest, student), HttpStatus.CREATED);
-       }
-       System.out.println("Student not found");
+        public ResponseEntity<Boolean> postDetails(@RequestBody UserSaveAndVerifyOtpDto userSaveAndVerifyOtpDto) {
+        User user = mapToUser(userSaveAndVerifyOtpDto);
+        VerifyOtpDto verifyOtpDto = new VerifyOtpDto();
+        verifyOtpDto.setEmailAddress(userSaveAndVerifyOtpDto.getEmailAddress());
+        verifyOtpDto.setOtpValue(userSaveAndVerifyOtpDto.getOtpValue());
+        System.out.println("Received request to save user: " + userSaveAndVerifyOtpDto.getEmailAddress() + " " + userSaveAndVerifyOtpDto.getOtpValue());
+        OTPServiceImpl otpService = new OTPServiceImpl();
+        if (otpService.verifyOTP(verifyOtpDto)) {
+            return ResponseEntity.ok(userService.saveDetails(user));
+        }
         return null;
    }
 
@@ -56,7 +63,7 @@ public class UserController {
            if (user == null) {
                return false;
            }
-           return userService.forgotPassword(email);
+           return userService.sendOtp(email);
     }
 
     @PostMapping("/changePassword")
@@ -65,10 +72,9 @@ public class UserController {
     }
 
     @PostMapping("/verifyOTP")
-        public Boolean verifyOTP(@RequestBody String email, String otp) {
-            User user = userRepository.findByEmailAddress(email);
-            OTPServiceImpl otpService = new OTPServiceImpl();
-            return otpService.verifyOTP(user.getEmailAddress(), otp);
+        public Boolean verifyOTP(@RequestBody VerifyOtpDto verifyOtpDto) {
+        OTPServiceImpl otpService = new OTPServiceImpl();
+        return otpService.verifyOTP(verifyOtpDto);
     }
 
     // Get user profile
@@ -83,5 +89,16 @@ public class UserController {
         }
 
         return ResponseEntity.ok(userProfileDto);
+    }
+
+    public User mapToUser(UserSaveAndVerifyOtpDto userSaveAndVerifyOtpDto) {
+        User user = new User();
+        user.setFirstName(userSaveAndVerifyOtpDto.getFirstName());
+        user.setLastName(userSaveAndVerifyOtpDto.getLastName());
+        user.setUserID(userSaveAndVerifyOtpDto.getIndexNumber());
+        user.setEmailAddress(userSaveAndVerifyOtpDto.getEmailAddress());
+        user.setPhoneNumber(userSaveAndVerifyOtpDto.getPhoneNumber());
+        user.setPassword(userSaveAndVerifyOtpDto.getPassword());
+        return user;
     }
 }

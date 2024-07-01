@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSaveResponse {
+public class UserCheckResponse {
     private String firstName;
     private String lastName;
     private Date dateOfBirth;
