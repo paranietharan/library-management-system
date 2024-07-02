@@ -45,6 +45,7 @@ public class ComplaintController {
         return ResponseEntity.ok(response);
     }
 
+    // Get by user id
     @GetMapping("/get")
     public ResponseEntity<List<ComplaintViewDto>> getComplaintsByUserId(@RequestParam String userID) {
         List<ComplaintViewDto> complaintDto = complaintService.getComplaintsByUserId(userID);
