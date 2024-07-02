@@ -21,8 +21,8 @@ public class OTPController {
         OTPServiceImpl otpService = new OTPServiceImpl();
         String otp = otpService.generateOTP(email);
         otpService.storeOTP(email, otp);
-        emailService.sendOTP(email, otp);
-        return "OTP sent to your email";
+        //emailService.sendOTP(email, otp);
+        return "OTP sent to your email " + otp;
     }
 
     // Verify OTP

@@ -1,7 +1,9 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.CommentDto;
+import com.alphacodes.librarymanagementsystem.DTO.ResourceCommentDto;
 import com.alphacodes.librarymanagementsystem.Model.ResourceComment;
+import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.repository.ResourceCommentRepository;
 import com.alphacodes.librarymanagementsystem.repository.ResourceRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
@@ -24,22 +26,35 @@ public class ResourceCommentServiceImpl implements ResourceCommentService{
     }
 
     @Override
-    public CommentDto addResourceComment(Long resourceId, CommentDto commentDto) {
+    public ResourceCommentDto addResourceComment(Long resourceId, CommentDto commentDto) {
         ResourceComment resourceComment1 = convertToResourceComment(commentDto);
+
+        User member = userRepository.findByUserID(commentDto.getUserID());
+        resourceComment1.setMember(member);
         resourceComment1.setBook(resourceRepository.findById(resourceId).orElseThrow(
-                () -> new RuntimeException("Resource not found with id " + resourceId)));
-
-
-        ResourceComment newResourceComment = resourceCommentRepository.save(resourceComment1);
-        return convertToCommentDto(newResourceComment);
+                () -> new RuntimeException("Resource not found with id " + resourceId))
+        );
+        resourceCommentRepository.save(resourceComment1);
+        return convertToResourceCommentDto(resourceComment1);
     }
 
     @Override
-    public List<CommentDto> getAllResourceComments(Long resourceId) {
+    public List<ResourceCommentDto> getAllResourceComments(Long resourceId) {
         List<ResourceComment> resourceComments = resourceCommentRepository.findByBook(resourceRepository.findById(resourceId).orElseThrow(
                 () -> new RuntimeException("Resource not found with id " + resourceId))
         );
-        return resourceComments.stream().map(this::convertToCommentDto).collect(Collectors.toList());
+        return resourceComments
+                .stream()
+                .map(this::convertToResourceCommentDto)
+                .collect(Collectors.toList());
+    }
+
+    private ResourceCommentDto convertToResourceCommentDto(ResourceComment resourceComment) {
+        ResourceCommentDto resourceCommentDto = new ResourceCommentDto();
+        resourceCommentDto.setResourceCommentId(resourceComment.getResourceCommentId());
+        resourceCommentDto.setUserID(resourceComment.getMember().getUserID());
+        resourceCommentDto.setComment(resourceComment.getComment());
+        return resourceCommentDto;
     }
 
     @Override

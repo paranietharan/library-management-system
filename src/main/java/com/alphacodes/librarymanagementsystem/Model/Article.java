@@ -30,7 +30,7 @@ public class Article {
     private Date dateCreated = new Date(); // Initialize with current date/time
 
     @Lob
-    @Column(name = "article_img")
+    @Column(name = "article_img", columnDefinition = "LONGBLOB")
     private byte[] articleImg;
 
     @ManyToOne(fetch = FetchType.EAGER)
