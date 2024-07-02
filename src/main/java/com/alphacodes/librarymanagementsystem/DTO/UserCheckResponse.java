@@ -14,4 +14,5 @@ public class UserCheckResponse {
     private String lastName;
     private Date dateOfBirth;
     private String grade;
+    private Boolean isUserExists;
 }

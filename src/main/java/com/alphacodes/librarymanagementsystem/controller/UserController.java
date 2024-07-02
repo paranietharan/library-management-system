@@ -25,7 +25,11 @@ public class UserController {
 
     @PostMapping("/checkDetails")
         public UserCheckResponse checkDetails(@RequestBody UserSaveRequest userSaveRequest) {
-        return userService.checkDetails(userSaveRequest);
+        User user = userRepository.findByEmailAddress(userSaveRequest.getEmailAddress());
+        if (user == null) {
+            return userService.checkDetails(userSaveRequest);
+        }
+        return new UserCheckResponse(null, null, null, null, true);
     }
 
     @PostMapping("/sendOtp")
@@ -58,17 +62,19 @@ public class UserController {
         return userService.performLogin(loginRequest);
    }
     @PostMapping("/forgotPassword")
-        public Boolean forgotPassword(@RequestBody String email) {
-           User user = userRepository.findByEmailAddress(email);
+        public Boolean forgotPassword(@RequestBody EmailDto emailDto) {
+           User user = userRepository.findByEmailAddress(emailDto.getEmailAddress());
            if (user == null) {
+               System.out.println("User not found");
                return false;
            }
-           return userService.sendOtp(email);
+           System.out.println("Received request to send OTP to email: " + emailDto.getEmailAddress());
+           return userService.sendOtp(emailDto.getEmailAddress());
     }
 
     @PostMapping("/changePassword")
-        public Boolean changePassword(@RequestBody String email, String password) {
-            return userService.changePassword(email, password);
+        public Boolean changePassword(@RequestBody LoginRequest loginRequest) {
+            return userService.changePassword(loginRequest.getEmailAddress(), loginRequest.getPassword());
     }
 
     @PostMapping("/verifyOTP")

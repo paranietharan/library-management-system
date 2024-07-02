@@ -101,6 +101,8 @@ public class UserServiceImpl implements UserService{
         if (user == null) {
             return false;
         }
+        System.out.println("email: " + email);
+        System.out.println("Password: " + password);
         String encryptedPassword = bCryptPasswordEncoder.encode(password);
         user.setPassword(encryptedPassword);
         userRepository.save(user);
@@ -127,6 +129,7 @@ public class UserServiceImpl implements UserService{
         userCheckResponse.setLastName(student.getLastName());
         userCheckResponse.setDateOfBirth(student.getDateOfBirth());
         userCheckResponse.setGrade(student.getGrade());
+        userCheckResponse.setIsUserExists(false);
         return userCheckResponse;
     }
 
