@@ -5,5 +5,8 @@ import lombok.Data;
 @Data
 public class ComplaintDto {
     private String userID;
-    private String complaint;
+    private String complaintDescription;;
+    private String complaintType;
+    private String complaintDate;
+    private String complaintTime;
 }
