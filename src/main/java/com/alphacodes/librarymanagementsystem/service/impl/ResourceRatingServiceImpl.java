@@ -1,7 +1,9 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.RatingDto;
+import com.alphacodes.librarymanagementsystem.Model.Resource;
 import com.alphacodes.librarymanagementsystem.Model.ResourceRating;
+import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.repository.ResourceRatingRepository;
 import com.alphacodes.librarymanagementsystem.repository.ResourceRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
@@ -9,6 +11,7 @@ import com.alphacodes.librarymanagementsystem.service.ResourceRatingService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ResourceRatingServiceImpl implements ResourceRatingService {
@@ -24,18 +27,52 @@ public class ResourceRatingServiceImpl implements ResourceRatingService {
     }
 
     @Override
-    public RatingDto addResourceRating(Long resourceId, RatingDto ratingDto) {
-        ResourceRating resourceRating = convertToResourceRating(ratingDto);
-        resourceRating.setBook(resourceRepository.findById(resourceId).orElseThrow(
-            () -> new RuntimeException("Resource not found with id " + resourceId)));
-
-        ResourceRating newResourceRating = resourceRatingRepository.save(resourceRating);
-        return convertToRatingDto(newResourceRating);
+    public float getResourceRating(Long resourceId) {
+        return calculateResourceRating(resourceId);
     }
 
     @Override
-    public float getResourceRating(Long resourceId) {
-        return calculateResourceRating(resourceId);
+    public RatingDto addOrUpdateResourceRating(Long resourceId, RatingDto ratingDto) {
+        // Get resource using id
+        Resource resource = resourceRepository.findById(resourceId).orElseThrow(
+                () -> new RuntimeException("Resource not found with id " + resourceId));
+
+        // Get user using id
+        User user = userRepository.findByUserID(ratingDto.getUserID());
+
+        // Get existing rating
+        Optional<ResourceRating> existingRating = resourceRatingRepository.findByResourceAndUser(resource, user);
+
+        ResourceRating resourceRating;
+
+        if (existingRating.isPresent()) {
+            resourceRating = existingRating.get();
+            resourceRating.setRating(ratingDto.getRating());
+        } else {
+            resourceRating = convertToResourceRating(ratingDto);
+            resourceRating.setBook(resource);
+            resourceRating.setMember(user);
+        }
+
+        ResourceRating savedRating = resourceRatingRepository.save(resourceRating);
+        return convertToRatingDto(savedRating);
+    }
+
+    @Override
+    public Float getResourceRatingByUserId(Long articleID, String userId) {
+        Optional<ResourceRating> resourceRating = resourceRatingRepository.findByResourceAndUser(
+                resourceRepository.findById(articleID).orElseThrow(
+                        () -> new RuntimeException("Resource not found with id " + articleID)),
+                userRepository.findByUserID(userId)
+        );
+
+        ResourceRating resourceRating1 = resourceRating.get();
+
+        if (resourceRating1 == null) {
+            throw new RuntimeException("No rating found for resource with id " + articleID + " and user with id " + userId);
+        }
+
+        return resourceRating1.getRating();
     }
 
 
