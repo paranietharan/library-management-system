@@ -46,6 +46,19 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public String deleteResource(Long resourceId) {
         Resource resource = resourceRepository.findById(resourceId).orElse(null);
+
+        // check if the resource exists
+        if(resource == null) {
+            return "Resource not found";
+        }
+
+
+        // TODO: check the foreign key constraints in
+        // 01. Reservation Table
+        // 02. Issue Table
+        // 03. fine Table
+        // 04. Resource Comment Table
+        // 05. Resource Rating Table
         resourceRepository.delete(resource);
         return "Resource deleted Successfully";
     }

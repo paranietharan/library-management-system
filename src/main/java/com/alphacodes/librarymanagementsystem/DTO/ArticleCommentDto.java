@@ -7,4 +7,5 @@ public class ArticleCommentDto {
     String comment;
     String commenterId;
     int articleId;
+    int articleCommentId;
 }

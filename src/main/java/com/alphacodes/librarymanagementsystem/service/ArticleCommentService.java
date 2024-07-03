@@ -9,6 +9,6 @@ import java.util.List;
 @Service
 public interface ArticleCommentService {
     ArticleComment addArticleComment(ArticleCommentDto articleCommentDto);
-    String deleteArticleComment(int articleID, int articleCommentId);
+    String deleteArticleComment(int articleCommentId);
     List<ArticleCommentDto> getAllArticleComments(int articleID);
 }
