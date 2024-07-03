@@ -20,4 +20,6 @@ public interface ResourceService {
 
     ResourceViewDto getResourceById(Long resourceId);
     Integer getAvailability(Long resourceId);
+
+    Integer getTotalResources();
 }

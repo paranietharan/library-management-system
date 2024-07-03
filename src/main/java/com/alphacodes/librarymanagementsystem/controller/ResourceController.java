@@ -172,4 +172,10 @@ public class ResourceController {
     public ResponseEntity<Integer> getAvailability(@PathVariable Long resourceId) {
         return new ResponseEntity<>(resourceService.getAvailability(resourceId), HttpStatus.OK);
     }
+
+    // get total number of resources
+    @GetMapping("/total")
+    public ResponseEntity<Integer> getTotalResources() {
+        return new ResponseEntity<>(resourceService.getTotalResources(), HttpStatus.OK);
+    }
 }

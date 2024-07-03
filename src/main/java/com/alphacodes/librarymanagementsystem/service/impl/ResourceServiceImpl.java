@@ -5,6 +5,7 @@ import com.alphacodes.librarymanagementsystem.DTO.ResourceViewDto;
 import com.alphacodes.librarymanagementsystem.Model.Resource;
 import com.alphacodes.librarymanagementsystem.repository.ResourceRepository;
 import com.alphacodes.librarymanagementsystem.service.ResourceService;
+import com.alphacodes.librarymanagementsystem.util.ImageUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -65,7 +66,14 @@ public class ResourceServiceImpl implements ResourceService {
         resource.setTitle(resourceDto.getTitle());
         resource.setNo_of_copies(resourceDto.getNo_of_copies());
         resource.setAbout(resourceDto.getAbout());
-        resource.setBookImg(resourceDto.getBookImg());
+
+        if(resourceDto.getBookImg() != null) {
+            //resource.setBookImg(resourceDto.getBookImg());
+            byte[] decompressedImage = ImageUtils.decompressBytes(resourceDto.getBookImg());
+            resource.setBookImg(decompressedImage);
+        } else {
+            resource.setBookImg(null);
+        }
 
         Resource updatedResource = resourceRepository.save(resource);
 
@@ -117,6 +125,11 @@ public class ResourceServiceImpl implements ResourceService {
         return resourceOpt.map(Resource::getNo_of_copies).orElse(null);
     }
 
+    @Override
+    public Integer getTotalResources() {
+        return resourceRepository.findAll().size();
+    }
+
     // Code for converting ResourceDto to Resource
     private Resource convertToResource(ResourceDto resourceDto){
         Resource resource = new Resource();
@@ -127,7 +140,14 @@ public class ResourceServiceImpl implements ResourceService {
         resource.setTitle(resourceDto.getTitle());
         resource.setNo_of_copies(resourceDto.getNo_of_copies());
         resource.setAbout(resourceDto.getAbout());
-        resource.setBookImg(resourceDto.getBookImg());
+
+        if(resourceDto.getBookImg() != null) {
+            //resource.setBookImg(resourceDto.getBookImg());
+            byte[] decompressedImage = ImageUtils.decompressBytes(resourceDto.getBookImg());
+            resource.setBookImg(decompressedImage);
+        } else {
+            resource.setBookImg(null);
+        }
 
         return resource;
     }
