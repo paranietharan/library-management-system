@@ -1,5 +1,6 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
+import com.alphacodes.librarymanagementsystem.DTO.IssueDto;
 import com.alphacodes.librarymanagementsystem.Model.Fine;
 import com.alphacodes.librarymanagementsystem.Model.Issue;
 import com.alphacodes.librarymanagementsystem.Model.Resource;
@@ -13,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class IssueServiceImpl implements IssueService {
@@ -36,15 +39,24 @@ public class IssueServiceImpl implements IssueService {
 
     // Function 2 issue resource
     @Override
-    public String issueResource(Long resourceId, int memberId, int librarianId) {
+    public String issueResource(Long resourceId, String memberId) {
         Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
-        Optional<User> memberOpt = userRepository.findById((int) memberId);
-        Optional<User> librarianOpt = userRepository.findById((int) librarianId);
+        Optional<User> memberOpt = Optional.ofNullable(userRepository.findByUserID(memberId));
 
-        if (resourceOpt.isPresent() && memberOpt.isPresent() && librarianOpt.isPresent()) {
+        // before issue resource check if hey need to pay fine or not
+        // if fine is not paid then they can't issue the resource
+        if(fineService.calculateFine(memberId) > 0){
+            return "Please pay the fine first.";
+        }
+
+        // also check if the user already lend a book and not return it
+        if(issueRepository.findNonReturnIssueByUserIdAndResourceId(memberId, resourceId).isPresent()){
+            return "You already have this book.";
+        }
+
+        if (resourceOpt.isPresent() && memberOpt.isPresent() ) {
             Resource resource = resourceOpt.get();
             User member = memberOpt.get();
-            User librarian = librarianOpt.get();
 
             // Get resource availability count
             Integer resourceCount = resource.getNo_of_copies();
@@ -59,8 +71,9 @@ public class IssueServiceImpl implements IssueService {
                 Issue issue = new Issue();
                 issue.setBook(resource);
                 issue.setMember(member);
-                issue.setLibrarian(librarian);
                 issue.setDate(new Date());
+                issue.setReturned(false);
+                issue.setFinePaid(false);
 
                 issueRepository.save(issue);
 
@@ -69,8 +82,9 @@ public class IssueServiceImpl implements IssueService {
                 fine.setPaidStatus(false);
                 fine.setAmount(0);
                 fine.setMember(member);
-                fine.setLibrarian(librarian);
                 fine.setResourceIssueDate(new Date());
+                fine.setIssue(issue);
+
                 // Save the fine record
                 fineRepository.save(fine);
 
@@ -85,23 +99,20 @@ public class IssueServiceImpl implements IssueService {
 
 
     // get Return resources
-    //@Override
-    public String returnResource(Long resourceId, int memberId) {
+    @Override
+    public String returnResource(Long resourceId, String memberId) {
         Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
-        Optional<User> memberOpt = userRepository.findById(memberId);
+        Optional<User> memberOpt = Optional.ofNullable(userRepository.findByUserID(memberId));
 
         if (resourceOpt.isPresent() && memberOpt.isPresent()) {
             Resource resource = resourceOpt.get();
             User member = memberOpt.get();
 
             // Find the issue record
-            Optional<Issue> issueOpt = issueRepository.findIssueByMemberId(memberId);
+            Optional<Issue> issueOpt = issueRepository.findNonReturnIssueByUserIdAndResourceId(memberId, resourceId);
 
             if (issueOpt.isPresent()) {
                 Issue issue = issueOpt.get();
-
-                // Delete the issue record
-                issueRepository.delete(issue);
 
                 // Increase the availability count of the resource
                 resource.setNo_of_copies(resource.getNo_of_copies() + 1);
@@ -110,9 +121,13 @@ public class IssueServiceImpl implements IssueService {
 
                 // Calculate fine
                 double fineAmount = fineService.calculateFine(memberId);
+
                 if(fineAmount == 0){
+                    // Delete the issue record
+                    //issueRepository.delete(issue);
+
                     // if the fine is zero then delete the fine record
-                    Fine fine = fineRepository.findByMember_Id(memberId);
+                    Fine fine = fineRepository.findByUserIdAndIssueId(memberId, issue.getIssueId());
                     fineRepository.delete(fine);
                 }
 
@@ -125,4 +140,24 @@ public class IssueServiceImpl implements IssueService {
         }
     }
 
+    // get issue history of a member
+    @Override
+    public List<IssueDto> getIssueHistory(String memberId) {
+        List<Issue> issueList = issueRepository.findIssueByUserId(memberId);
+        return issueList
+                .stream()
+                .map(this::convertToIssueDto)
+                .collect(Collectors.toList());
+    }
+
+    private IssueDto convertToIssueDto(Issue issue) {
+        IssueDto issueDto = new IssueDto();
+
+        issueDto.setIssueId(issue.getIssueId());
+        issueDto.setDate(issue.getDate());
+        issueDto.setReturned(issue.isReturned());
+        issueDto.setFinePaid(issue.isFinePaid());
+
+        return issueDto;
+    }
 }

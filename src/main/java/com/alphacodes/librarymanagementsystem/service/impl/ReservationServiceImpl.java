@@ -33,42 +33,40 @@ public class ReservationServiceImpl implements ReservationService {
     private FineRepository fineRepository;
 
     @Transactional
-    public String reserveResource(Long resourceId, int userId) {
+    public String reserveResource(Long resourceId, String userId) {
         Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
-        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<User> userOpt = Optional.ofNullable(userRepository.findByUserID(userId));
 
         // Check the member need to pay fine or not
-        Fine fine = fineRepository.findByMember_Id(userId);
+        Fine fine = fineRepository.findByUserID(userId);
 
         // If fine is not paid. Then return message to pay the fine first.
         // becoz if they want to pay fine they can't reserve the resource.
         if (fine != null && !fine.isPaidStatus()) {
             return "Please pay the fine first.";
-        } else {
+        }
 
-            if (resourceOpt.isPresent() && userOpt.isPresent()) {
-                Resource resource = resourceOpt.get();
-                User user = userOpt.get();
+        if (resourceOpt.isPresent() && userOpt.isPresent()) {
+            Resource resource = resourceOpt.get();
+            User user = userOpt.get();
 
-                if (resource.getNo_of_copies() > 0) {
-                    resource.setNo_of_copies(resource.getNo_of_copies() - 1);
-                    resourceRepository.save(resource);
+            if (resource.getNo_of_copies() > 0) {
+                resource.setNo_of_copies(resource.getNo_of_copies() - 1);
+                resourceRepository.save(resource);
 
-                    Reservation reservation = new Reservation();
-                    reservation.setBook(resource);
-                    reservation.setMember(user);
-                    reservation.setReservationTime(LocalDateTime.now());
-                    reservation.setStatus("Active");
-                    reservationRepository.save(reservation);
+                Reservation reservation = new Reservation();
+                reservation.setBook(resource);
+                reservation.setMember(user);
+                reservation.setReservationTime(LocalDateTime.now());
+                reservation.setStatus("Active");
+                reservationRepository.save(reservation);
 
-                    return "Resource reserved successfully for 24 hours.";
-                } else {
-                    return "Resource is not available.";
-                }
+                return "Resource reserved successfully for 24 hours.";
             } else {
-                return "Resource or User not found.";
+                return "Resource is not available.";
             }
-
+        } else {
+            return "Resource or User not found.";
         }
     }
 

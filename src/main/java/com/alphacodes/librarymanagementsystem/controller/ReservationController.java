@@ -13,7 +13,7 @@ public class ReservationController {
     private ReservationServiceImpl reservationService;
 
     @PostMapping("/reserve")
-    public ResponseEntity<String> reserveResource(@RequestParam Long resourceId, @RequestParam int userId) {
+    public ResponseEntity<String> reserveResource(@RequestParam Long resourceId, @RequestParam String userId) {
         String result = reservationService.reserveResource(resourceId, userId);
         return ResponseEntity.ok(result);
     }

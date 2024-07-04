@@ -23,8 +23,8 @@ public class Fine {
     @JoinColumn(name = "member", nullable = false)
     private User member;
 
-    @ManyToOne
-    @JoinColumn(name = "librarian", nullable = false)
-    private User librarian;
+    @OneToOne
+    @JoinColumn(name = "issue", nullable = false)
+    private Issue issue;
 }
 

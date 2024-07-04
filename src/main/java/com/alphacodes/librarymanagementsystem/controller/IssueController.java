@@ -1,11 +1,12 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
+import com.alphacodes.librarymanagementsystem.DTO.IssueDto;
 import com.alphacodes.librarymanagementsystem.service.IssueService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/issues")
@@ -15,13 +16,19 @@ public class IssueController {
 
     // Issues books
     @PostMapping("/issue")
-    public String issueResource(@RequestParam Long resourceId, @RequestParam int memberId, @RequestParam int librarianId) {
-        return issueService.issueResource(resourceId, memberId, librarianId);
+    public ResponseEntity<String> issueResource(@RequestParam Long resourceId, @RequestParam String memberId) {
+        return ResponseEntity.ok(issueService.issueResource(resourceId, memberId));
     }
 
     // Get return Issued books
     @PostMapping("/return")
-    public String returnResource(@RequestParam Long resourceId, @RequestParam int memberId) {
-        return issueService.returnResource(resourceId, memberId);
+    public ResponseEntity<String> returnResource(@RequestParam Long resourceId, @RequestParam String memberId) {
+        return ResponseEntity.ok(issueService.returnResource(resourceId, memberId));
+    }
+
+    // Get Issue History
+    @GetMapping("/history/{memberId}")
+    public ResponseEntity<List<IssueDto>> getIssueHistory(@PathVariable String memberId) {
+        return ResponseEntity.ok(issueService.getIssueHistory(memberId));
     }
 }

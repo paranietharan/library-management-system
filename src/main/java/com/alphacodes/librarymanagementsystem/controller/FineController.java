@@ -16,12 +16,12 @@ public class FineController {
     private FineService fineService;
 
     @GetMapping("/calculate/{memberId}")
-    public double calculateFine(@PathVariable int memberId) {
+    public double calculateFine(@PathVariable String memberId) {
         return fineService.calculateFine(memberId);
     }
 
     @PostMapping("/settle/{memberId}")
-    public String settleFine(@PathVariable int memberId) {
+    public String settleFine(@PathVariable String memberId) {
         return fineService.settleFine(memberId);
     }
 }

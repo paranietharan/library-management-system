@@ -16,16 +16,14 @@ public class Issue {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long issueId;
     private Date date;
+    private boolean returned;
+    private boolean finePaid;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "book", nullable = false)
     private Resource book;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "member", nullable = false)
     private User member;
-
-    @OneToOne
-    @JoinColumn(name = "librarian", nullable = false)
-    private User librarian;
 }
