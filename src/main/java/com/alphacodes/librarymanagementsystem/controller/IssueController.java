@@ -22,13 +22,13 @@ public class IssueController {
 
     // Get return Issued books
     @PostMapping("/return")
-    public ResponseEntity<String> returnResource(@RequestParam Long resourceId, @RequestParam String memberId) {
-        return ResponseEntity.ok(issueService.returnResource(resourceId, memberId));
+    public ResponseEntity<String> returnResource(@RequestParam String memberId) {
+        return ResponseEntity.ok(issueService.returnResource(memberId));
     }
 
-    // Get Issue History
-    @GetMapping("/history/{memberId}")
-    public ResponseEntity<List<IssueDto>> getIssueHistory(@PathVariable String memberId) {
-        return ResponseEntity.ok(issueService.getIssueHistory(memberId));
+    // check a user has a book or not
+    @GetMapping("/check")
+    public ResponseEntity<IssueDto> checkResource(@RequestParam String memberId) {
+        return ResponseEntity.ok(issueService.checkResource(memberId));
     }
 }

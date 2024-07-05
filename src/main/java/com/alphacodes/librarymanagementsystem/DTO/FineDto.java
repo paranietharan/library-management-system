@@ -11,4 +11,5 @@ public class FineDto {
     private boolean paidStatus;
     private Date resourceIssueDate;
     private String memberId;
+    private Long resourceId;
 }

@@ -10,4 +10,5 @@ public class IssueDto {
     private Date date;
     private boolean returned;
     private boolean finePaid;
+    private Long resourceId;
 }

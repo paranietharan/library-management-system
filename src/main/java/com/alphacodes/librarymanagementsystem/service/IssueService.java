@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface IssueService {
     String issueResource(Long resourceId, String memberId);
-    String returnResource(Long resourceId, String memberId);
-    List<IssueDto> getIssueHistory(String memberId);
+    String returnResource(String memberId);
+
+    IssueDto checkResource(String memberId);
 }

@@ -50,7 +50,8 @@ public class IssueServiceImpl implements IssueService {
         }
 
         // also check if the user already lend a book and not return it
-        if(issueRepository.findNonReturnIssueByUserIdAndResourceId(memberId, resourceId).isPresent()){
+        Optional<Issue> issueOpt = issueRepository.findNonReturnIssueByUserIdAndResourceId(memberId, resourceId);
+        if(issueOpt.isPresent() && !issueOpt.get().isReturned()){
             return "You already have this book.";
         }
 
@@ -100,36 +101,45 @@ public class IssueServiceImpl implements IssueService {
 
     // get Return resources
     @Override
-    public String returnResource(Long resourceId, String memberId) {
-        Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
+    public String returnResource(String memberId) {
         Optional<User> memberOpt = Optional.ofNullable(userRepository.findByUserID(memberId));
 
-        if (resourceOpt.isPresent() && memberOpt.isPresent()) {
-            Resource resource = resourceOpt.get();
+        if (memberOpt.isPresent()) {
             User member = memberOpt.get();
 
             // Find the issue record
-            Optional<Issue> issueOpt = issueRepository.findNonReturnIssueByUserIdAndResourceId(memberId, resourceId);
+            Optional<Issue> issueOpt = issueRepository.findNonReturnIssueByUserId(memberId);
 
             if (issueOpt.isPresent()) {
                 Issue issue = issueOpt.get();
 
+                // check user has returned the book or not
+                if(issue.isReturned()){
+                    return "Resource already returned.";
+                }
+
+                // Get the resource
+                Resource resource = issue.getBook();
                 // Increase the availability count of the resource
                 resource.setNo_of_copies(resource.getNo_of_copies() + 1);
                 resourceRepository.save(resource);
 
-
                 // Calculate fine
                 double fineAmount = fineService.calculateFine(memberId);
-
                 if(fineAmount == 0){
-                    // Delete the issue record
-                    //issueRepository.delete(issue);
-
                     // if the fine is zero then delete the fine record
                     Fine fine = fineRepository.findByUserIdAndIssueId(memberId, issue.getIssueId());
-                    fineRepository.delete(fine);
+                    if (fine != null) {
+                        fineRepository.delete(fine);
+
+                        // set the issue record as fine paid
+                        issue.setFinePaid(true);
+                    }
                 }
+
+                // Set the issue record as returned
+                issue.setReturned(true);
+                issueRepository.save(issue);
 
                 return "Resource returned successfully.";
             } else {
@@ -140,24 +150,35 @@ public class IssueServiceImpl implements IssueService {
         }
     }
 
-    // get issue history of a member
     @Override
-    public List<IssueDto> getIssueHistory(String memberId) {
-        List<Issue> issueList = issueRepository.findIssueByUserId(memberId);
-        return issueList
-                .stream()
-                .map(this::convertToIssueDto)
-                .collect(Collectors.toList());
-    }
+    public IssueDto checkResource(String memberId) {
+        Optional<User> memberOpt = Optional.ofNullable(userRepository.findByUserID(memberId));
 
-    private IssueDto convertToIssueDto(Issue issue) {
-        IssueDto issueDto = new IssueDto();
+        if (memberOpt.isPresent()) {
+            User member = memberOpt.get();
 
-        issueDto.setIssueId(issue.getIssueId());
-        issueDto.setDate(issue.getDate());
-        issueDto.setReturned(issue.isReturned());
-        issueDto.setFinePaid(issue.isFinePaid());
+            // Find the issue record
+            Optional<Issue> issueOpt = issueRepository.findNonReturnIssueByUserId(memberId);
 
-        return issueDto;
+            if (issueOpt.isPresent()) {
+                Issue issue = issueOpt.get();
+
+                // Get the resource
+                Resource resource = issue.getBook();
+
+                IssueDto issueDto = new IssueDto();
+                issueDto.setIssueId(issue.getIssueId());
+                issueDto.setDate(issue.getDate());
+                issueDto.setReturned(issue.isReturned());
+                issueDto.setFinePaid(issue.isFinePaid());
+                issueDto.setResourceId(resource.getId());
+
+                return issueDto;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 }

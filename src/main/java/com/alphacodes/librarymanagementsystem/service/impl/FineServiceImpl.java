@@ -73,6 +73,7 @@ public class FineServiceImpl implements FineService {
     }
 
     // Get all unpaid fine details
+    @Override
     public List<FineDto> getAllUnpaidFine() {
         // get all unpaid fines from db
         List<Fine> fineList = fineRepository.findByPaidStatus(false);
@@ -88,6 +89,7 @@ public class FineServiceImpl implements FineService {
             fineDto.setPaidStatus(fine.isPaidStatus());
             fineDto.setResourceIssueDate(fine.getResourceIssueDate());
             fineDto.setMemberId(fine.getMember().getUserID());
+            fineDto.setResourceId(fine.getIssue().getBook().getId());
 
             fineDtoList.add(fineDto);
         }
@@ -96,6 +98,7 @@ public class FineServiceImpl implements FineService {
     }
 
     // Get all fine history of user
+    @Override
     public List<FineDto> getFineHistoryByUser(String memberId) {
         // get all fines from db by memberId
         List<Fine> fineList = fineRepository.findAllFinesByMemberID(memberId);
@@ -111,6 +114,7 @@ public class FineServiceImpl implements FineService {
             fineDto.setPaidStatus(fine.isPaidStatus());
             fineDto.setResourceIssueDate(fine.getResourceIssueDate());
             fineDto.setMemberId(fine.getMember().getUserID());
+            fineDto.setResourceId(fine.getIssue().getBook().getId());
 
             fineDtoList.add(fineDto);
         }
