@@ -14,4 +14,8 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long>{
 
     @Query("SELECT c FROM Complaint c WHERE c.member.userID = :userId")
     Optional<List<Complaint>> findByMember_UserID(@Param("userId") String userId);
+
+    // Find all complaints that are resolved using custom query
+    @Query("SELECT c FROM Complaint c WHERE c.isResolved = :b")
+    List<Complaint> findByResolved(boolean b);
 }

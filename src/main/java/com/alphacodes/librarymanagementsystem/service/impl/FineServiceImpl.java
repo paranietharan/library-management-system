@@ -5,6 +5,7 @@ import com.alphacodes.librarymanagementsystem.Model.Fine;
 import com.alphacodes.librarymanagementsystem.repository.FineRepository;
 import com.alphacodes.librarymanagementsystem.service.FineService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -149,6 +150,29 @@ public class FineServiceImpl implements FineService {
         List<Fine> fines = fineRepository.findAll();
         for (Fine fine : fines) {
             calculateFine(fine);
+        }
+    }
+
+    @Override
+    public ResponseEntity<FineDto> getUnpaidFineByUser(String memberId) {
+        // search fine from fine table by memberId
+        Fine fine = fineRepository.findByUserID(memberId);
+
+        // if fine is not paid
+        //&& fine.getAmount() > 0
+        if (!fine.isPaidStatus() && fine.getAmount() > 0) {
+            FineDto fineDto = new FineDto();
+
+            fineDto.setFineId(fine.getFineId());
+            fineDto.setAmount(fine.getAmount());
+            fineDto.setPaidStatus(fine.isPaidStatus());
+            fineDto.setResourceIssueDate(fine.getResourceIssueDate());
+            fineDto.setMemberId(fine.getMember().getUserID());
+            fineDto.setResourceId(fine.getIssue().getBook().getId());
+
+            return ResponseEntity.ok(fineDto);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 }

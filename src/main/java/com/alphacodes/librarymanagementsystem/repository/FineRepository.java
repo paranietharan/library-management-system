@@ -9,10 +9,6 @@ import java.util.List;
 
 @Repository
 public interface FineRepository extends JpaRepository<Fine, Long>{
-
-    @Query("SELECT f FROM Fine f WHERE f.member.userID = :memberId")
-    Fine findByMember_Id(int memberId);
-
     List<Fine> findByPaidStatus(boolean b);
 
     // Custom query to find fine by member ID and issue ID

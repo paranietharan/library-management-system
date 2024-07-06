@@ -77,4 +77,18 @@ public class ComplaintController {
         ComplaintViewDto updatedComplaint = complaintService.unresolveComplaint(complaintId);
         return ResponseEntity.ok(updatedComplaint);
     }
+
+    // get all unresolved complaints
+    @GetMapping("/unresolved")
+    public ResponseEntity<List<ComplaintViewDto>> getUnresolvedComplaints() {
+        List<ComplaintViewDto> complaintDto = complaintService.getUnresolvedComplaints();
+        return ResponseEntity.ok(complaintDto);
+    }
+
+    // get all resolved complaints
+    @GetMapping("/resolved")
+    public ResponseEntity<List<ComplaintViewDto>> getResolvedComplaints() {
+        List<ComplaintViewDto> complaintDto = complaintService.getResolvedComplaints();
+        return ResponseEntity.ok(complaintDto);
+    }
 }

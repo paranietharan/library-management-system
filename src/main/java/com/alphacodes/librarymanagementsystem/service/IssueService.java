@@ -9,4 +9,6 @@ public interface IssueService {
     String returnResource(String memberId);
 
     IssueDto checkResource(String memberId);
+
+    List<IssueDto> getHistory(String memberId);
 }

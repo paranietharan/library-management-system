@@ -96,6 +96,26 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     @Override
+    public List<ComplaintViewDto> getUnresolvedComplaints() {
+        List<Complaint> complaints = complaintRepository.findByResolved(false);
+
+        return complaints
+                .stream()
+                .map(this::mapToComplaintViewtDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ComplaintViewDto> getResolvedComplaints() {
+        List<Complaint> complaints = complaintRepository.findByResolved(true);
+
+        return complaints
+                .stream()
+                .map(this::mapToComplaintViewtDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ComplaintViewDto getComplaintById(Long complaintId) {
         Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(
                 () -> new RuntimeException("Complaint not found with id " + complaintId));

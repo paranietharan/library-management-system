@@ -31,4 +31,10 @@ public class IssueController {
     public ResponseEntity<IssueDto> checkResource(@RequestParam String memberId) {
         return ResponseEntity.ok(issueService.checkResource(memberId));
     }
+
+    // get non returned books by user
+    @GetMapping("/history/{memberId}")
+    public ResponseEntity<List<IssueDto>> getHistory(@PathVariable String memberId) {
+        return ResponseEntity.ok(issueService.getHistory(memberId));
+    }
 }

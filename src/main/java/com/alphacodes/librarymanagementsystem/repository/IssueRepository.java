@@ -23,4 +23,8 @@ public interface IssueRepository extends JpaRepository<Issue, Long>{
     // Custom query to find issue by member ID
     @Query("SELECT i FROM Issue i WHERE i.member.userID = :memberId AND i.returned = false")
     Optional<Issue> findNonReturnIssueByUserId(String memberId);
+
+    // Custom query to find issue by member ID
+    @Query("SELECT i FROM Issue i WHERE i.member.userID = :memberId AND i.returned = true")
+    List<Issue> findReturnIssueByUserId(String memberId);
 }

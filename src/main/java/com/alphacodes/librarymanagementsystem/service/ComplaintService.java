@@ -19,4 +19,8 @@ public interface ComplaintService {
     ComplaintViewDto resolveComplaint(Long complaintId);
 
     ComplaintViewDto unresolveComplaint(Long complaintId);
+
+    List<ComplaintViewDto> getUnresolvedComplaints();
+
+    List<ComplaintViewDto> getResolvedComplaints();
 }

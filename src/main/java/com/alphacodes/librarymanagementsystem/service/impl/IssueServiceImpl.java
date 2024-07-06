@@ -181,4 +181,33 @@ public class IssueServiceImpl implements IssueService {
             return null;
         }
     }
+
+    @Override
+    public List<IssueDto> getHistory(String memberId) {
+        Optional<User> memberOpt = Optional.ofNullable(userRepository.findByUserID(memberId));
+
+        if (memberOpt.isPresent()) {
+            User member = memberOpt.get();
+
+            // Find the issue record
+            List<Issue> issueList = issueRepository.findReturnIssueByUserId(memberId);
+
+            if (issueList != null) {
+                return issueList.stream().map(issue -> {
+                    IssueDto issueDto = new IssueDto();
+                    issueDto.setIssueId(issue.getIssueId());
+                    issueDto.setDate(issue.getDate());
+                    issueDto.setReturned(issue.isReturned());
+                    issueDto.setFinePaid(issue.isFinePaid());
+                    issueDto.setResourceId(issue.getBook().getId());
+
+                    return issueDto;
+                }).collect(Collectors.toList());
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
 }
