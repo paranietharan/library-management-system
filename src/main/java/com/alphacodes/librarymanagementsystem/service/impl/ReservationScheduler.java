@@ -12,7 +12,7 @@ public class ReservationScheduler {
 
     // method will be executed once every hour.
     // so that expired reservations are released for every one hour.
-    @Scheduled(fixedRate = 3600000) // Every hour
+    @Scheduled(fixedRate = 24*60*60*1000) // Every day
     public void releaseExpiredReservations() {
         reservationService.releaseExpiredReservations();
     }
