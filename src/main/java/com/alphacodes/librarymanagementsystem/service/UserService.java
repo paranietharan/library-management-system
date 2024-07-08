@@ -1,9 +1,6 @@
 package com.alphacodes.librarymanagementsystem.service;
 
-import com.alphacodes.librarymanagementsystem.DTO.LoginResponse;
-import com.alphacodes.librarymanagementsystem.DTO.UserProfileDto;
-import com.alphacodes.librarymanagementsystem.DTO.UserSaveRequest;
-import com.alphacodes.librarymanagementsystem.DTO.UserSaveResponse;
+import com.alphacodes.librarymanagementsystem.DTO.*;
 import com.alphacodes.librarymanagementsystem.Model.Student;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import org.springframework.http.ResponseEntity;
@@ -18,4 +15,8 @@ public interface UserService {
     boolean changePassword(String email, String password);
 
     UserProfileDto getUserProfileById(String id);
+
+    UserDto updateUserProfile(String id, UserDto userDto);
+
+    UserDto getUserProfileDetails(String id);
 }
