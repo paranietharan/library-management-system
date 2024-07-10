@@ -151,4 +151,9 @@ public class UserController {
         UserDto userDto = userService.getUserProfileDetails(id);
         return ResponseEntity.ok(userDto);
     }
+
+    /*TODO: change password by user id*/
+    /*TODO: delete user by librarian */
+    /*TODO: Edit details by librarian */
+
 }
