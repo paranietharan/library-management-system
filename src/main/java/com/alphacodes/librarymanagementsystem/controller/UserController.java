@@ -8,7 +8,9 @@ import com.alphacodes.librarymanagementsystem.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -107,5 +109,46 @@ public class UserController {
         user.setPhoneNumber(userSaveAndVerifyOtpDto.getPhoneNumber());
         user.setPassword(userSaveAndVerifyOtpDto.getPassword());
         return user;
+    }
+
+    @PutMapping("/updateUserProfile/{id}")
+    public ResponseEntity<UserDto> updateUserProfile(
+            @PathVariable String id,
+
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String Email,
+            @RequestParam String phoneNumber,
+            @RequestParam(required = false) MultipartFile profileImg
+    ) throws IOException {
+        System.out.println("Received request to update profile for userID: " + id);
+
+        // Create a new user profile DTO
+        UserDto userDto = new UserDto();
+        userDto.setFirstName(firstName);
+        userDto.setLastName(lastName);
+        userDto.setEmail(Email);
+        userDto.setPhoneNumber(phoneNumber);
+
+        if(profileImg != null) {
+            userDto.setProfileImg(profileImg.getBytes());
+        } else {
+            userDto.setProfileImg(null);
+        }
+
+        UserDto updatedUserDto = userService.updateUserProfile(id, userDto);
+
+        // If user profile is not found return 404
+        if (updatedUserDto == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(updatedUserDto);
+    }
+
+    @GetMapping("/getUserProfileDetails/{id}")
+    public ResponseEntity<UserDto> getUserProfileDetails(@PathVariable String id) {
+        UserDto userDto = userService.getUserProfileDetails(id);
+        return ResponseEntity.ok(userDto);
     }
 }

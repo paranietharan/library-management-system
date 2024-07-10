@@ -141,4 +141,39 @@ public class UserServiceImpl implements UserService{
         return userProfileDto;
     }
 
+    @Override
+    public UserDto updateUserProfile(String id, UserDto userDto) {
+        User user = userRepository.findByUserID(id);
+
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setEmailAddress(userDto.getEmail());
+        user.setPhoneNumber(userDto.getPhoneNumber());
+
+        // Update profile image if provided, otherwise keep existing
+        if (userDto.getProfileImg() != null) {
+            user.setProfileImg(userDto.getProfileImg());
+        }
+
+        User updatedUser = userRepository.save(user);
+        return convertToDto(updatedUser);
+    }
+
+    @Override
+    public UserDto getUserProfileDetails(String id) {
+        User user = userRepository.findByUserID(id);
+        return convertToDto(user);
+    }
+
+    private UserDto convertToDto(User user) {
+        UserDto dto = new UserDto();
+        dto.setUserID(user.getUserID());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmailAddress());
+        dto.setPhoneNumber(user.getPhoneNumber());
+        dto.setProfileImg(user.getProfileImg());
+        // Set other fields as needed
+        return dto;
+    }
 }

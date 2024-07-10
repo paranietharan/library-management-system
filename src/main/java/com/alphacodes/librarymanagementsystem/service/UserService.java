@@ -13,4 +13,7 @@ public interface UserService {
     Boolean changePassword(String email, String password);
     UserCheckResponse checkDetails(UserSaveRequest userSaveRequest);
     UserProfileDto getUserProfileById(String id);
+
+    UserDto updateUserProfile(String id, UserDto userDto);
+    UserDto getUserProfileDetails(String id);
 }
