@@ -53,15 +53,27 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserCheckResponse checkDetails(UserSaveRequest userSaveRequest) {
         Student student = studentRepository.findByIndexNumber(userSaveRequest.getIndexNumber());
+
+        // TODO: DElete dev code
+//        if(student != null){
+//            System.out.println("Student found with : " + student.getFirstName());
+//            System.out.println("check email " +
+//                    student.getEmailAddress().equals(userSaveRequest.getEmailAddress())
+//            );
+//            System.out.println("check phone " +
+//                    student.getPhoneNumber().equals(userSaveRequest.getPhoneNumber())
+//            );
+//        }
+
         if (student != null
                 && student.getEmailAddress().equals(userSaveRequest.getEmailAddress())
                 && student.getPhoneNumber().equals(userSaveRequest.getPhoneNumber())) {
 
-            System.out.println("Student: " + student.getFirstName());
+            System.out.println("Student found with : " + student.getFirstName());
             return mapToUserCheckResponse(student);
         }
-        System.out.println("Student not found");
-        System.out.println("Student: " + userSaveRequest.getFirstName());
+
+        System.out.println("Student account not created: " + userSaveRequest.getFirstName());
         return null;
     }
 
