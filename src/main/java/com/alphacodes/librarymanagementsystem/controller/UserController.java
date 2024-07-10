@@ -67,6 +67,7 @@ public class UserController {
            if (user == null) {
                System.out.println("User not found");
                return false;
+
            }
            System.out.println("Received request to send OTP to email: " + emailDto.getEmailAddress());
            return userService.sendOtp(emailDto.getEmailAddress());
