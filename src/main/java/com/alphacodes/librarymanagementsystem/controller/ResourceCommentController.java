@@ -1,6 +1,7 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
 import com.alphacodes.librarymanagementsystem.DTO.CommentDto;
+import com.alphacodes.librarymanagementsystem.DTO.ResourceCommentDto;
 import com.alphacodes.librarymanagementsystem.service.ResourceCommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,16 @@ public class ResourceCommentController {
 
     // Add a new comment to a resource
     @PostMapping("/{resourceId}/comment")
-    public ResponseEntity<CommentDto> addResourceComment(@PathVariable Long resourceId, @RequestBody CommentDto CommentDto) {
-        return new ResponseEntity<>(resourceCommentService.addResourceComment(resourceId, CommentDto), HttpStatus.CREATED);
+    public ResponseEntity<ResourceCommentDto> addResourceComment(
+            @PathVariable Long resourceId,
+            @RequestBody CommentDto commentDto
+    ) {
+        return new ResponseEntity<>(resourceCommentService.addResourceComment(resourceId, commentDto), HttpStatus.CREATED);
     }
 
     // Get all comments for a resource
     @GetMapping("/{resourceId}/comment")
-    public List<CommentDto> getAllResourceComments(@PathVariable long resourceId) {
+    public List<ResourceCommentDto> getAllResourceComments(@PathVariable long resourceId) {
         return resourceCommentService.getAllResourceComments(resourceId);
     }
 

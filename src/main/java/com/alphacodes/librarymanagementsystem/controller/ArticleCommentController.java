@@ -29,10 +29,9 @@ public class ArticleCommentController {
         return articleCommentService.getAllArticleComments(articleId);
     }
 
-    @DeleteMapping("/{articleId}/comment/{articleCommentId}")
-    public ResponseEntity<String> deleteArticleComment(@PathVariable int articleId, @PathVariable int articleCommentId) {
-        return new ResponseEntity<>(articleCommentService.deleteArticleComment(articleId, articleCommentId), HttpStatus.NO_CONTENT);
+    @DeleteMapping("/comment/{articleCommentId}")
+    public ResponseEntity<String> deleteArticleComment( @PathVariable int articleCommentId) {
+        return new ResponseEntity<>(articleCommentService.deleteArticleComment(articleCommentId), HttpStatus.NO_CONTENT);
     }
-
 
 }

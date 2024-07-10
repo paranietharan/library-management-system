@@ -16,15 +16,31 @@ public class ResourceRatingController {
         this.resourceRatingService = resourceRatingService;
     }
 
-    // Add a new rating to a resource
     @PostMapping("/{resourceId}/rating")
-    public ResponseEntity<RatingDto> addResourceRating(@PathVariable Long resourceId, @RequestBody RatingDto RatingDto) {
-        return new ResponseEntity<>(resourceRatingService.addResourceRating(resourceId, RatingDto), HttpStatus.CREATED);
+    public ResponseEntity<RatingDto> addOrUpdateArticleRating(
+            @PathVariable Long resourceId,
+            @RequestBody RatingDto ratingDto
+    ) {
+        return new ResponseEntity<>(
+                resourceRatingService
+                        .addOrUpdateResourceRating(resourceId, ratingDto), HttpStatus.CREATED
+        );
     }
 
     // Get the rating for a resource
     @GetMapping("/{resourceId}/rating")
     public float getResourceRating(@PathVariable Long resourceId) {
         return resourceRatingService.getResourceRating(resourceId);
+    }
+
+    //
+    @GetMapping("/{articleID}/rating/{userId}")
+    public ResponseEntity<Float> getResourceRatingByUserId(
+            @PathVariable Long articleID,
+            @PathVariable String userId
+    ) {
+        return new ResponseEntity<>(
+                resourceRatingService.getResourceRatingByUserId(articleID, userId), HttpStatus.OK
+        );
     }
 }

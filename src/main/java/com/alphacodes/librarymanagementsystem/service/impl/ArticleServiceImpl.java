@@ -1,6 +1,7 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.ArticleDto;
+import com.alphacodes.librarymanagementsystem.DTO.ArticleHomeDto;
 import com.alphacodes.librarymanagementsystem.DTO.ArticleViewDto;
 import com.alphacodes.librarymanagementsystem.Model.Article;
 import com.alphacodes.librarymanagementsystem.Model.User;
@@ -43,26 +44,6 @@ public class ArticleServiceImpl implements ArticleService {
             e.printStackTrace();
             throw new RuntimeException("Failed to add article. Please check your request.");
         }
-    }
-
-
-    @Override
-    public String deleteArticle(int articleID) {
-        articleRepository.deleteById(articleID);
-        return "Article deleted Successfully";
-    }
-
-    @Override
-    public ArticleDto getArticleById(int articleID) {
-        Article article = articleRepository.findById(articleID).
-                orElseThrow(() -> new RuntimeException("Article not found with id " + articleID));
-        return mapToArticleDto(article);
-    }
-
-    @Override
-    public List<ArticleDto> getAllArticles() {
-        List<Article> articles = articleRepository.findAll();
-        return articles.stream().map(this::mapToArticleDto).collect(Collectors.toList());
     }
 
     private ArticleDto mapToArticleDto(Article article) {
@@ -191,6 +172,22 @@ public class ArticleServiceImpl implements ArticleService {
         }
     }
 
+    @Override
+    public List<ArticleHomeDto> searchArticleByHeading(String heading) {
+        // return the articles that contains the words in the heading
+        List<Article> articles = articleRepository.findByTitleContaining(heading);
+
+        return articles.stream().map(this::convertToHomeDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ArticleHomeDto> searchArticleByBody(String body) {
+        // return the articles that contains the words in the body
+        List<Article> articles = articleRepository.findByBodyContaining(body);
+
+        return articles.stream().map(this::convertToHomeDto).collect(Collectors.toList());
+    }
+
     private ArticleViewDto convertToDto(Article article) {
         ArticleViewDto dto = new ArticleViewDto();
         dto.setArticleID(article.getArticleId());
@@ -198,6 +195,19 @@ public class ArticleServiceImpl implements ArticleService {
         dto.setTitle(article.getTitle());
         dto.setBody(article.getBody());
         dto.setArticleImg(article.getArticleImg());
+        return dto;
+    }
+
+    private ArticleHomeDto convertToHomeDto(Article article) {
+        ArticleHomeDto dto = new ArticleHomeDto();
+
+        dto.setArticleID(article.getArticleId());
+        dto.setUserID(article.getAuthor().getUserID());
+        dto.setTitle(article.getTitle());
+        dto.setBody(article.getBody());
+        dto.setArticleImg(article.getArticleImg());
+        dto.setDateCreated(article.getDateCreated());
+
         return dto;
     }
 }

@@ -1,21 +1,25 @@
 package com.alphacodes.librarymanagementsystem.service;
 
 import com.alphacodes.librarymanagementsystem.DTO.ResourceDto;
+import com.alphacodes.librarymanagementsystem.DTO.ResourceViewDto;
 
 import java.util.List;
 
 public interface ResourceService {
     ResourceDto addResource(ResourceDto resourceDto);
-    List<ResourceDto> getAllResources();
-    ResourceDto getResourceById(Long resourceId);
+    List<ResourceViewDto> getAllResources();
+    ResourceViewDto getResourceByISBN(String isbn);
     String deleteResource(Long resourceId);
     ResourceDto updateResource(Long resourceId, ResourceDto resourceDto);
-    List<ResourceDto> searchResource(String keyword);
-    List<ResourceDto> getResourcesByCategory(String category);
-    List<ResourceDto> getResourcesByAuthor(String author);
-    List<ResourceDto> getResourcesByTitle(String title);
 
+    // Search for Resource
+    List<ResourceViewDto> searchResource(String keyword);
+    List<ResourceViewDto> getResourcesByCategory(String category);
+    List<ResourceViewDto> getResourcesByAuthor(String author);
+    List<ResourceViewDto> getResourcesByTitle(String title);
 
+    ResourceViewDto getResourceById(Long resourceId);
+    Integer getAvailability(Long resourceId);
 
-
+    Integer getTotalResources();
 }

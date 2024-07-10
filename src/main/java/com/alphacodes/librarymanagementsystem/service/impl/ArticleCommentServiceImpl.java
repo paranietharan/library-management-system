@@ -50,7 +50,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
-    public String deleteArticleComment(int articleID, int articleCommentId) {
+    public String deleteArticleComment(int articleCommentId) {
         ArticleComment articleComment = articleCommentRepository.findById(articleCommentId).orElseThrow(
             () -> new RuntimeException("Article Comment not found with id " + articleCommentId));
         articleCommentRepository.delete(articleComment);
@@ -70,6 +70,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
                     articleCommentDto.setComment(articleComment.getComment());
                     articleCommentDto.setCommenterId(articleComment.getCommenter().getUserID());
                     articleCommentDto.setArticleId(articleComment.getArticle().getArticleId());
+                    articleCommentDto.setArticleCommentId(articleComment.getArticleCommentId());
                     return articleCommentDto;
                 })
                 .collect(Collectors.toList());

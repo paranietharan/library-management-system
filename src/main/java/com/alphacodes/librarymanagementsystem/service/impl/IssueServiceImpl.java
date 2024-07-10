@@ -1,5 +1,6 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
+import com.alphacodes.librarymanagementsystem.DTO.IssueDto;
 import com.alphacodes.librarymanagementsystem.Model.Fine;
 import com.alphacodes.librarymanagementsystem.Model.Issue;
 import com.alphacodes.librarymanagementsystem.Model.Resource;
@@ -13,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class IssueServiceImpl implements IssueService {
@@ -36,31 +39,42 @@ public class IssueServiceImpl implements IssueService {
 
     // Function 2 issue resource
     @Override
-    public String issueResource(Long resourceId, int memberId, int librarianId) {
+    public String issueResource(Long resourceId, String memberId) {
         Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
-        Optional<User> memberOpt = userRepository.findById((int) memberId);
-        Optional<User> librarianOpt = userRepository.findById((int) librarianId);
+        Optional<User> memberOpt = Optional.ofNullable(userRepository.findByUserID(memberId));
 
-        if (resourceOpt.isPresent() && memberOpt.isPresent() && librarianOpt.isPresent()) {
+        // before issue resource check if hey need to pay fine or not
+        // if fine is not paid then they can't issue the resource
+        if(fineService.calculateFine(memberId) > 0){
+            return "Please pay the fine first.";
+        }
+
+        // also check if the user already lend a book and not return it
+        Optional<Issue> issueOpt = issueRepository.findNonReturnIssueByUserIdAndResourceId(memberId, resourceId);
+        if(issueOpt.isPresent() && !issueOpt.get().isReturned()){
+            return "You already have this book.";
+        }
+
+        if (resourceOpt.isPresent() && memberOpt.isPresent() ) {
             Resource resource = resourceOpt.get();
             User member = memberOpt.get();
-            User librarian = librarianOpt.get();
 
             // Get resource availability count
-            Integer resourceCount = resource.getAvailability();
+            Integer resourceCount = resource.getNo_of_copies();
 
             // Check resource availability
             if (resourceCount > 0) {
                 // Decrease the availability count
-                resource.setAvailability(resourceCount - 1);
+                resource.setNo_of_copies(resourceCount - 1);
                 resourceRepository.save(resource);
 
                 // Create new Issue record
                 Issue issue = new Issue();
                 issue.setBook(resource);
                 issue.setMember(member);
-                issue.setLibrarian(librarian);
                 issue.setDate(new Date());
+                issue.setReturned(false);
+                issue.setFinePaid(false);
 
                 issueRepository.save(issue);
 
@@ -69,8 +83,9 @@ public class IssueServiceImpl implements IssueService {
                 fine.setPaidStatus(false);
                 fine.setAmount(0);
                 fine.setMember(member);
-                fine.setLibrarian(librarian);
                 fine.setResourceIssueDate(new Date());
+                fine.setIssue(issue);
+
                 // Save the fine record
                 fineRepository.save(fine);
 
@@ -85,36 +100,46 @@ public class IssueServiceImpl implements IssueService {
 
 
     // get Return resources
-    //@Override
-    public String returnResource(Long resourceId, int memberId) {
-        Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
-        Optional<User> memberOpt = userRepository.findById(memberId);
+    @Override
+    public String returnResource(String memberId) {
+        Optional<User> memberOpt = Optional.ofNullable(userRepository.findByUserID(memberId));
 
-        if (resourceOpt.isPresent() && memberOpt.isPresent()) {
-            Resource resource = resourceOpt.get();
+        if (memberOpt.isPresent()) {
             User member = memberOpt.get();
 
             // Find the issue record
-            Optional<Issue> issueOpt = issueRepository.findIssueByMemberId(memberId);
+            Optional<Issue> issueOpt = issueRepository.findNonReturnIssueByUserId(memberId);
 
             if (issueOpt.isPresent()) {
                 Issue issue = issueOpt.get();
 
-                // Delete the issue record
-                issueRepository.delete(issue);
+                // check user has returned the book or not
+                if(issue.isReturned()){
+                    return "Resource already returned.";
+                }
 
+                // Get the resource
+                Resource resource = issue.getBook();
                 // Increase the availability count of the resource
-                resource.setAvailability(resource.getAvailability() + 1);
+                resource.setNo_of_copies(resource.getNo_of_copies() + 1);
                 resourceRepository.save(resource);
-
 
                 // Calculate fine
                 double fineAmount = fineService.calculateFine(memberId);
                 if(fineAmount == 0){
                     // if the fine is zero then delete the fine record
-                    Fine fine = fineRepository.findByMember_Id(memberId);
-                    fineRepository.delete(fine);
+                    Fine fine = fineRepository.findByUserIdAndIssueId(memberId, issue.getIssueId());
+                    if (fine != null) {
+                        fineRepository.delete(fine);
+
+                        // set the issue record as fine paid
+                        issue.setFinePaid(true);
+                    }
                 }
+
+                // Set the issue record as returned
+                issue.setReturned(true);
+                issueRepository.save(issue);
 
                 return "Resource returned successfully.";
             } else {
@@ -125,4 +150,64 @@ public class IssueServiceImpl implements IssueService {
         }
     }
 
+    @Override
+    public IssueDto checkResource(String memberId) {
+        Optional<User> memberOpt = Optional.ofNullable(userRepository.findByUserID(memberId));
+
+        if (memberOpt.isPresent()) {
+            User member = memberOpt.get();
+
+            // Find the issue record
+            Optional<Issue> issueOpt = issueRepository.findNonReturnIssueByUserId(memberId);
+
+            if (issueOpt.isPresent()) {
+                Issue issue = issueOpt.get();
+
+                // Get the resource
+                Resource resource = issue.getBook();
+
+                IssueDto issueDto = new IssueDto();
+                issueDto.setIssueId(issue.getIssueId());
+                issueDto.setDate(issue.getDate());
+                issueDto.setReturned(issue.isReturned());
+                issueDto.setFinePaid(issue.isFinePaid());
+                issueDto.setResourceId(resource.getId());
+
+                return issueDto;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<IssueDto> getHistory(String memberId) {
+        Optional<User> memberOpt = Optional.ofNullable(userRepository.findByUserID(memberId));
+
+        if (memberOpt.isPresent()) {
+            User member = memberOpt.get();
+
+            // Find the issue record
+            List<Issue> issueList = issueRepository.findReturnIssueByUserId(memberId);
+
+            if (issueList != null) {
+                return issueList.stream().map(issue -> {
+                    IssueDto issueDto = new IssueDto();
+                    issueDto.setIssueId(issue.getIssueId());
+                    issueDto.setDate(issue.getDate());
+                    issueDto.setReturned(issue.isReturned());
+                    issueDto.setFinePaid(issue.isFinePaid());
+                    issueDto.setResourceId(issue.getBook().getId());
+
+                    return issueDto;
+                }).collect(Collectors.toList());
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
 }

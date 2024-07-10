@@ -14,7 +14,12 @@ public class Complaint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long complaintId;
-    private String complaint;
+
+    private String complaintType;
+    private String complaintDescription;
+    private boolean isResolved;
+    private String complaintDate;
+    private String complaintTime;
 
     @ManyToOne
     @JoinColumn(name = "member", nullable = false)

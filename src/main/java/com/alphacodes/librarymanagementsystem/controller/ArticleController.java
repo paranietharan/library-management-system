@@ -1,8 +1,10 @@
 package com.alphacodes.librarymanagementsystem.controller;
 
 import com.alphacodes.librarymanagementsystem.DTO.ArticleDto;
+import com.alphacodes.librarymanagementsystem.DTO.ArticleHomeDto;
 import com.alphacodes.librarymanagementsystem.DTO.ArticleViewDto;
 import com.alphacodes.librarymanagementsystem.Model.Article;
+import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.ArticleService;
 import com.alphacodes.librarymanagementsystem.util.ImageUtils;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/article")
@@ -33,41 +36,6 @@ public class ArticleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<ArticleDto>> getAllArticles() {
-        try {
-            List<ArticleDto> articles = articleService.getAllArticles();
-            return ResponseEntity.ok(articles);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/{articleID}")
-    public ResponseEntity<ArticleDto> getArticleById(@PathVariable int articleID) {
-        try {
-            ArticleDto article = articleService.getArticleById(articleID);
-            return ResponseEntity.ok(article);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @DeleteMapping("/{articleID}")
-    public ResponseEntity<String> deleteArticle(@PathVariable int articleID) {
-        try {
-            String result = articleService.deleteArticle(articleID);
-            return ResponseEntity.ok(result);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
 
     // for article view dto
     @GetMapping("/allArticles")
@@ -166,8 +134,25 @@ public class ArticleController {
         }
     }
 
-    //TODO: Search Articles By heading
-    //TODO: Search Articles By author
-    //TODO: Search Articles By date
-    //TODO: Search Articles by content
+    // Serach articles
+    @GetMapping("/search/heading/{heading}")
+    public ResponseEntity<List<ArticleHomeDto>> searchArticleByHeading(@PathVariable String heading) {
+        try {
+            List<ArticleHomeDto> articles = articleService.searchArticleByHeading(heading);
+            return ResponseEntity.ok(articles);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    @GetMapping("/search/body/{body}")
+    public ResponseEntity<List<ArticleHomeDto>> searchArticleByBody(@PathVariable String body) {
+        try {
+            List<ArticleHomeDto> articles = articleService.searchArticleByBody(body);
+            return ResponseEntity.ok(articles);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
