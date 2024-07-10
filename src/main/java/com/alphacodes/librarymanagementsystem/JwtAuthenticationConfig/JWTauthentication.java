@@ -13,14 +13,14 @@ import java.util.Date;
 
 @Service
 public class JWTauthentication {
-    @Autowired
-    private UserRepository userRepository;
+
     public String generateToken(User user){
         byte[] secretKeyBytes= Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded();
         String secretKey= Base64.getEncoder().encodeToString(secretKeyBytes);
         assert user != null;
         String token= Jwts.builder()
                 .claim("username",user.getEmailAddress())
+                .claim("userId",user.getUserID())
                 .claim("role",user.getRole())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+1000*60*60*10))

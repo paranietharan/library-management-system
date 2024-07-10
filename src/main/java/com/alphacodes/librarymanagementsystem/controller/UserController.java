@@ -29,7 +29,7 @@ public class UserController {
         if (user == null) {
             return userService.checkDetails(userSaveRequest);
         }
-        return new UserCheckResponse(null, null, null, null, true);
+        return new UserCheckResponse(null, null, null, null, "User already exists");
     }
 
     @PostMapping("/sendOtp")
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-       public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+       public LoginResponse login(@RequestBody LoginRequest loginRequest) {
         System.out.println("Received request to login user: " + loginRequest.getEmailAddress() + " " + loginRequest.getPassword());
         return userService.performLogin(loginRequest);
    }

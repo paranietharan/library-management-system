@@ -10,8 +10,6 @@ import com.alphacodes.librarymanagementsystem.enums.Role;
 import com.alphacodes.librarymanagementsystem.repository.StudentRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.UserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,20 +33,20 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public ResponseEntity<LoginResponse> performLogin(LoginRequest loginRequest) {
+    public LoginResponse performLogin(LoginRequest loginRequest) {
         User user = userRepository.findByEmailAddress(loginRequest.getEmailAddress());
         System.out.println("email" + loginRequest.getEmailAddress());
         if (user == null) {
-            return new ResponseEntity<>(new LoginResponse("User not found", false, null), HttpStatus.NOT_FOUND);
+            return new LoginResponse("User not found", false, null);
         }
         System.out.println("User: " + user.getFirstName());
         System.out.println("Password: " + loginRequest.getPassword());
         boolean isPasswordMatched = bCryptPasswordEncoder.matches(loginRequest.getPassword(), user.getPassword());
         if (isPasswordMatched) {
             String token = jwtA.generateToken(user);
-            return new ResponseEntity<>(new LoginResponse("Login Successful", true, token), HttpStatus.OK);
+            return new LoginResponse("Login Successful", true, token);
         } else {
-            return new ResponseEntity<>(new LoginResponse("Incorrect Password", false, null), HttpStatus.UNAUTHORIZED);
+            return new LoginResponse("Incorrect Password", false, null);
         }
     }
     
@@ -129,7 +127,7 @@ public class UserServiceImpl implements UserService{
         userCheckResponse.setLastName(student.getLastName());
         userCheckResponse.setDateOfBirth(student.getDateOfBirth());
         userCheckResponse.setGrade(student.getGrade());
-        userCheckResponse.setIsUserExists(false);
+        userCheckResponse.setMessage("User found");
         return userCheckResponse;
     }
 
