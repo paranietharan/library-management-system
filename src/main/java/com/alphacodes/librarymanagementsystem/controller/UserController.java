@@ -155,28 +155,28 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    /*TODO: change password by user id*/
-
     @PostMapping("/changePassword/{id}")
     public Boolean changePassword(@PathVariable String id, @RequestBody ChangePasswordRequest changePasswordRequest) {
         User user = userRepository.findByUserID(id);
         boolean isPasswordMatch = bCryptPasswordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword());
         if (isPasswordMatch) {
             userService.changePassword(user.getEmailAddress(), changePasswordRequest.getNewPassword());
+            return true;
         }
         return false;
     }
 
-    /*TODO: delete user by librarian */
-
+    /* TODO: Librarian delete user -- need to remove foreign key constraints */
     @DeleteMapping("/deleteUserProfile/{id}")
     public Boolean deleteUserProfile(@PathVariable String id) {
         userService.deleteUserProfile(id);
         return true;
     }
 
-    /*TODO: Edit details by librarian */
-
-
-
+    /* TODO: Librarian add user */
+    /*
+    01. Enter details
+    02. show additional details or else show error -- use checkdetails-end point
+    03. send password to email
+     */
 }

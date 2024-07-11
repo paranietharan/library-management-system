@@ -43,9 +43,9 @@ public class StudentServiceImpl implements StudentService {
                 } else{
                     System.out.println("Student with index number "
                             + indexNumber
-                            + "Name : "
+                            + " Name : "
                             + existingStudent.getFirstName()
-                            + "already exists.");
+                            + " already exists.");
                 }
             }
         } catch (ParseException e) {

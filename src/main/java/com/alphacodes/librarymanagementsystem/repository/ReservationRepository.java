@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long>{
     // 2 find the reservations that are before a certain date
+    @Query("SELECT r FROM Reservation r WHERE r.reservationTime < ?1")
     List<Reservation> findByReservationTimeBefore(LocalDateTime dateTime);
 
     // find the reservation by member id and status
