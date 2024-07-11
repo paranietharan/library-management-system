@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService{
     public UserCheckResponse checkDetails(UserSaveRequest userSaveRequest) {
         Student student = studentRepository.findByIndexNumber(userSaveRequest.getIndexNumber());
 
-        // TODO: DElete dev code
+        // TODO: Delete dev code
 //        if(student != null){
 //            System.out.println("Student found with : " + student.getFirstName());
 //            System.out.println("check email " +
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService{
         userRepository.save(user);
         return true;
     }
-    //TODO: return type
+
 
     @Override
     public List<User> getAllUserDetails() {
@@ -188,4 +188,16 @@ public class UserServiceImpl implements UserService{
         // Set other fields as needed
         return dto;
     }
+
+    @Override
+    public Boolean deleteUserProfile(String id) {
+        User user = userRepository.findByUserID(id);
+        if (user == null) {
+            return false;
+        }
+        userRepository.delete(user);
+        return true;
+    }
+
+
 }
