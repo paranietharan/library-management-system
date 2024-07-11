@@ -92,7 +92,12 @@
 			<version>2.0.1</version>
 		</dependency>
 
-
+		<!--- Require for .csv file handling -->
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.5.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
