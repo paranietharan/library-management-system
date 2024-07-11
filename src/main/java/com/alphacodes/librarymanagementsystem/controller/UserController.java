@@ -7,6 +7,7 @@ import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,11 +19,13 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
-    public UserController(UserService userService, UserRepository userRepository) {
+    public UserController(UserService userService, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @PostMapping("/checkDetails")
@@ -153,7 +156,27 @@ public class UserController {
     }
 
     /*TODO: change password by user id*/
+
+    @PostMapping("/changePassword/{id}")
+    public Boolean changePassword(@PathVariable String id, @RequestBody ChangePasswordRequest changePasswordRequest) {
+        User user = userRepository.findByUserID(id);
+        boolean isPasswordMatch = bCryptPasswordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword());
+        if (isPasswordMatch) {
+            userService.changePassword(user.getEmailAddress(), changePasswordRequest.getNewPassword());
+        }
+        return false;
+    }
+
     /*TODO: delete user by librarian */
+
+    @DeleteMapping("/deleteUserProfile/{id}")
+    public Boolean deleteUserProfile(@PathVariable String id) {
+        userService.deleteUserProfile(id);
+        return true;
+    }
+
     /*TODO: Edit details by librarian */
+
+
 
 }
