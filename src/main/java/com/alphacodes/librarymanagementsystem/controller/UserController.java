@@ -78,9 +78,14 @@ public class UserController {
            return userService.sendOtp(emailDto.getEmailAddress());
     }
 
-    @PostMapping("/changePassword")
-        public Boolean changePassword(@RequestBody LoginRequest loginRequest) {
-            return userService.changePassword(loginRequest.getEmailAddress(), loginRequest.getPassword());
+
+       // make some changes here
+    @PostMapping("/resetPassword")
+        public Boolean changePassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+            if (resetPasswordRequest.getIsVerified()){
+                return userService.changePassword(resetPasswordRequest.getEmailAddress(), resetPasswordRequest.getPassword());
+            }
+            return false;
     }
 
     @PostMapping("/verifyOTP")
