@@ -171,14 +171,12 @@ public class UserController {
         return false;
     }
 
-    /* TODO: Librarian delete user -- need to remove foreign key constraints */
     @DeleteMapping("/deleteUserProfile/{id}")
     public Boolean deleteUserProfile(@PathVariable String id) {
         userService.deleteUserProfile(id);
         return true;
     }
 
-    /* TODO: Librarian add user */
     @PostMapping("librarian/addUser")
     public ResponseEntity<String> addUser(
             @RequestParam("email") String email,
