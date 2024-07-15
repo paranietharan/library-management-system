@@ -10,6 +10,7 @@ import com.alphacodes.librarymanagementsystem.enums.Role;
 import com.alphacodes.librarymanagementsystem.repository.StudentRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.UserService;
+import com.alphacodes.librarymanagementsystem.util.PasswordUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -197,6 +198,40 @@ public class UserServiceImpl implements UserService{
         }
         userRepository.delete(user);
         return true;
+    }
+
+    @Override
+    public String LibrarianAddUser(String email, String phoneNumber, String indexNumber) {
+        // check the above details user is member or not
+        User user1 = userRepository.findByUserID(indexNumber);
+        if(user1 != null){
+            return "User already exists";
+        }
+
+        // check if student exists
+        Student student = studentRepository.findByIndexNumber(indexNumber);
+
+        String password = PasswordUtil.generateStrongPassword();
+        if (student != null) {
+            User user = new User();
+            user.setFirstName(student.getFirstName());
+            user.setLastName(student.getLastName());
+            user.setEmailAddress(email);
+            user.setPhoneNumber(phoneNumber);
+            user.setUserID(indexNumber);
+            user.setPassword(password);
+            user.setRole(Role.MEMBER);
+            userRepository.save(user);
+
+            System.out.println("User added successfully"
+                    + "\npassword: " + password
+                    + "\nEmail Address: " + email
+                    + "\nPhone Number: " + phoneNumber
+                    + "\nIndex Number: " + indexNumber);
+            return "User added successfully";
+        } else {
+            return "User not found in Student Database";
+        }
     }
 
 

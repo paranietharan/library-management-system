@@ -179,9 +179,14 @@ public class UserController {
     }
 
     /* TODO: Librarian add user */
-    /*
-    01. Enter details
-    02. show additional details or else show error -- use checkdetails-end point
-    03. send password to email
-     */
+    @PostMapping("librarian/addUser")
+    public ResponseEntity<String> addUser(
+            @RequestParam("email") String email,
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("indexNumber") String indexNumber
+    ) {
+        return new ResponseEntity<>(userService
+                .LibrarianAddUser(email, phoneNumber, indexNumber), HttpStatus.OK
+        );
+    }
 }

@@ -17,4 +17,5 @@ public interface UserService {
     UserDto getUserProfileDetails(String id);
     Boolean deleteUserProfile(String id);
 
+    String LibrarianAddUser(String email, String phoneNumber, String indexNumber);
 }
