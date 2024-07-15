@@ -118,11 +118,11 @@ public class UserController {
     public ResponseEntity<UserDto> updateUserProfile(
             @PathVariable String id,
 
-            @RequestParam String firstName,
-            @RequestParam String lastName,
-            @RequestParam String Email,
-            @RequestParam String phoneNumber,
-            @RequestParam(required = false) MultipartFile profileImg
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName,
+            @RequestParam("email") String Email,
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam(value = "profileImg", required = false) MultipartFile profileImg
     ) throws IOException {
         System.out.println("Received request to update profile for userID: " + id);
 
