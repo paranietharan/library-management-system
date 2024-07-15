@@ -210,4 +210,15 @@ public class IssueServiceImpl implements IssueService {
             return null;
         }
     }
+
+    // Function 3: get all the issued resources count
+    @Override
+    public int getAllIssuedResourcesCount() {
+        // Find all issues where the resource has not been returned
+        List<Issue> issuedResources = issueRepository.findAllByReturned(false);
+
+        // Return the count of such issues
+        return issuedResources.size();
+    }
+
 }

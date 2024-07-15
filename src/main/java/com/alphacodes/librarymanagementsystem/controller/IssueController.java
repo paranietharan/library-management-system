@@ -37,4 +37,9 @@ public class IssueController {
     public ResponseEntity<List<IssueDto>> getHistory(@PathVariable String memberId) {
         return ResponseEntity.ok(issueService.getHistory(memberId));
     }
+
+    @GetMapping("/issue-book-count")
+    public ResponseEntity<Integer> getIssuedBookCount() {
+        return ResponseEntity.ok(issueService.getAllIssuedResourcesCount());
+    }
 }

@@ -18,4 +18,5 @@ public interface UserService {
     Boolean deleteUserProfile(String id);
 
     String LibrarianAddUser(String email, String phoneNumber, String indexNumber);
+    void createAdminAccount();
 }

@@ -140,7 +140,17 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public Integer getTotalResources() {
-        return resourceRepository.findAll().size();
+        int totalResources = 0;
+        List<Resource> resources = resourceRepository.findAll();
+
+        if(resources.isEmpty()) {
+            return 0;
+        } else {
+            for(Resource resource: resources) {
+                totalResources += resource.getNo_of_copies();
+            }
+            return totalResources;
+        }
     }
 
     // Code for converting ResourceDto to Resource

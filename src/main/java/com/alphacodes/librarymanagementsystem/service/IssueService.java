@@ -11,4 +11,6 @@ public interface IssueService {
     IssueDto checkResource(String memberId);
 
     List<IssueDto> getHistory(String memberId);
+
+    int getAllIssuedResourcesCount();
 }

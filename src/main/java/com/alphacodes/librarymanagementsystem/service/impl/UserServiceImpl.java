@@ -219,7 +219,8 @@ public class UserServiceImpl implements UserService{
             user.setEmailAddress(email);
             user.setPhoneNumber(phoneNumber);
             user.setUserID(indexNumber);
-            user.setPassword(password);
+            String encryptedPassword2 = bCryptPasswordEncoder.encode(password);
+            user.setPassword(encryptedPassword2);
             user.setRole(Role.MEMBER);
             userRepository.save(user);
 
@@ -234,5 +235,22 @@ public class UserServiceImpl implements UserService{
         }
     }
 
+    @Override
+    public void createAdminAccount(){
+        User user = userRepository.findByUserID("admin");
+        if(user != null){
+            return;
+        }
+        User admin = new User();
+        admin.setUserID("admin");
+        admin.setFirstName("Admin");
+        admin.setLastName("Admin");
+        admin.setEmailAddress("admin@admin.com");
+        admin.setPhoneNumber("0000000000");
+        String encryptedPassword = bCryptPasswordEncoder.encode("admin");
+        admin.setPassword(encryptedPassword);
+        admin.setRole(Role.LIBRARIAN);
+        userRepository.save(admin);
+    }
 
 }
