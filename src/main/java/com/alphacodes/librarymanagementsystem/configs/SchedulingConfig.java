@@ -18,4 +18,3 @@ public class SchedulingConfig {
         fineService.checkAndUpdateFines();
     }
 }
-

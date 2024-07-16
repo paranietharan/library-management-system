@@ -13,8 +13,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class FineServiceImpl implements FineService {
+    private static final Logger log = LoggerFactory.getLogger(FineServiceImpl.class);
+
     // Fine amount constant
     private static final double FINE_AMOUNT = 0.5;
     @Autowired
@@ -56,19 +61,29 @@ public class FineServiceImpl implements FineService {
     // Settle fine amount by member
     @Override
     public String settleFine(String memberId) {
-        // search fine from fine table by memberId
+        log.info("Attempting to settle fine for member: {}", memberId);
+
         Fine fine = fineRepository.findByUserID(memberId);
 
-        // if fine is not paid
+        if (fine == null) {
+            log.warn("No fine found for member: {}", memberId);
+            return "No fine to settle";
+        }
+
+        log.info("Fine found for member: {}. Paid status: {}", memberId, fine.isPaidStatus());
+
         if (!fine.isPaidStatus()) {
-            // Set paid status to true
             fine.setPaidStatus(true);
-
-            // Update fine table
-            fineRepository.delete(fine);
-
-            return "Fine settled successfully";
+            try {
+                fineRepository.save(fine);
+                log.info("Fine settled successfully for member: {}", memberId);
+                return "Fine settled successfully";
+            } catch (Exception e) {
+                log.error("Error settling fine for member: {}. Error: {}", memberId, e.getMessage(), e);
+                throw new RuntimeException("Error settling fine", e);
+            }
         } else {
+            log.info("Fine already settled for member: {}", memberId);
             return "Fine already settled";
         }
     }
@@ -145,6 +160,7 @@ public class FineServiceImpl implements FineService {
         }
     }
 
+    @Override
     public void checkAndUpdateFines() {
         // Fetch all fines and calculate fines where necessary
         List<Fine> fines = fineRepository.findAll();
@@ -152,11 +168,17 @@ public class FineServiceImpl implements FineService {
             calculateFine(fine);
         }
     }
+    // Automation -----------------
 
     @Override
     public ResponseEntity<FineDto> getUnpaidFineByUser(String memberId) {
         // search fine from fine table by memberId
         Fine fine = fineRepository.findByUserID(memberId);
+
+        // If they don't have any fine
+        if (fine == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         // if fine is not paid
         //&& fine.getAmount() > 0
