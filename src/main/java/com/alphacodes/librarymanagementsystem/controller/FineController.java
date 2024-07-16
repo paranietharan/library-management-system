@@ -4,15 +4,11 @@ import com.alphacodes.librarymanagementsystem.DTO.FineDto;
 import com.alphacodes.librarymanagementsystem.service.FineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/fine")
 public class FineController {
 
@@ -39,7 +35,7 @@ public class FineController {
         return fineService.getFineHistoryByUser(memberId);
     }
 
-    @GetMapping("unpaid/{memberId}")
+    @GetMapping("/unpaid/{memberId}")
     public ResponseEntity<FineDto> getUnpaidFineByUser(@PathVariable String memberId) {
         return fineService.getUnpaidFineByUser(memberId);
     }
