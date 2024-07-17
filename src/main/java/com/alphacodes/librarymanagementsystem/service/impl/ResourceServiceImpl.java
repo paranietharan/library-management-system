@@ -93,6 +93,7 @@ public class ResourceServiceImpl implements ResourceService {
         resourceCommentRepository
                 .findByResource(resource)
                         .forEach(resourceCommentRepository::delete);
+
         // 05. Resource Rating Table
         resourceRatingRepository
                 .findByResource(resource)
