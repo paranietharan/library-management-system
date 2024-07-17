@@ -3,7 +3,7 @@ package com.alphacodes.librarymanagementsystem.service.impl;
 import com.alphacodes.librarymanagementsystem.DTO.ResourceDto;
 import com.alphacodes.librarymanagementsystem.DTO.ResourceViewDto;
 import com.alphacodes.librarymanagementsystem.Model.Resource;
-import com.alphacodes.librarymanagementsystem.repository.ResourceRepository;
+import com.alphacodes.librarymanagementsystem.repository.*;
 import com.alphacodes.librarymanagementsystem.service.ResourceService;
 import com.alphacodes.librarymanagementsystem.util.ImageUtils;
 import org.springframework.stereotype.Service;
@@ -16,9 +16,27 @@ import java.util.stream.Collectors;
 public class ResourceServiceImpl implements ResourceService {
 
     private final ResourceRepository resourceRepository;
+    private final IssueRepository issueRepository;
+    private final ResourceCommentRepository resourceCommentRepository;
+    private final ResourceRatingRepository resourceRatingRepository;
+    private final FineRepository fineRepository;
+    private final ReservationRepository reservationRepository;
 
-    public ResourceServiceImpl(ResourceRepository resourceRepository) {
+    public ResourceServiceImpl(
+            ResourceRepository resourceRepository,
+            IssueRepository issueRepository,
+            ResourceCommentRepository resourceCommentRepository,
+            ResourceRatingRepository resourceRatingRepository,
+            FineRepository fineRepository,
+            ReservationRepository reservationRepository
+    ) {
         this.resourceRepository = resourceRepository;
+
+        this.issueRepository = issueRepository;
+        this.reservationRepository = reservationRepository;
+        this.fineRepository = fineRepository;
+        this.resourceCommentRepository = resourceCommentRepository;
+        this.resourceRatingRepository = resourceRatingRepository;
     }
 
     @Override
@@ -53,12 +71,34 @@ public class ResourceServiceImpl implements ResourceService {
         }
 
 
-        // TODO: check the foreign key constraints in
         // 01. Reservation Table
+        reservationRepository
+                .findByResource(resource)
+                        .forEach(reservationRepository::delete);
+
+        // 02. fine Table
+        issueRepository
+                .findByResource(resource)
+                        .forEach(issue -> fineRepository
+                                .findByIssue(issue)
+                                .forEach(fineRepository::delete));
+
+
         // 02. Issue Table
-        // 03. fine Table
+        issueRepository
+                .findByResource(resource)
+                        .forEach(issueRepository::delete);
+
         // 04. Resource Comment Table
+        resourceCommentRepository
+                .findByResource(resource)
+                        .forEach(resourceCommentRepository::delete);
+
         // 05. Resource Rating Table
+        resourceRatingRepository
+                .findByResource(resource)
+                        .forEach(resourceRatingRepository::delete);
+
         resourceRepository.delete(resource);
         return "Resource deleted Successfully";
     }

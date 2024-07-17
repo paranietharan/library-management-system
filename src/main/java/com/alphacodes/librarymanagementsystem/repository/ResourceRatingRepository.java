@@ -18,4 +18,12 @@ public interface ResourceRatingRepository extends JpaRepository<ResourceRating, 
 
     @Query("SELECT rr FROM ResourceRating rr WHERE rr.book = :book AND rr.member = :member")
     Optional<ResourceRating> findByResourceAndUser(@Param("book") Resource book, @Param("member") User member);
+
+    // Find all ratings by a user
+    @Query("SELECT rr FROM ResourceRating rr WHERE rr.member = :user")
+    Iterable<ResourceRating> findByUser(User user);
+
+    // Find all ratings by a resource
+    @Query("SELECT rr FROM ResourceRating rr WHERE rr.book = :resource")
+    Iterable<ResourceRating> findByResource(Resource resource);
 }

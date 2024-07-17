@@ -3,12 +3,12 @@ package com.alphacodes.librarymanagementsystem.service.impl;
 import com.alphacodes.librarymanagementsystem.DTO.*;
 //import com.alphacodes.librarymanagementsystem.EmailService.EmailServiceImpl;
 import com.alphacodes.librarymanagementsystem.JwtAuthenticationConfig.JWTauthentication;
+import com.alphacodes.librarymanagementsystem.Model.Reservation;
 import com.alphacodes.librarymanagementsystem.Model.Student;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.OTPservice.OTPServiceImpl;
 import com.alphacodes.librarymanagementsystem.enums.Role;
-import com.alphacodes.librarymanagementsystem.repository.StudentRepository;
-import com.alphacodes.librarymanagementsystem.repository.UserRepository;
+import com.alphacodes.librarymanagementsystem.repository.*;
 import com.alphacodes.librarymanagementsystem.service.UserService;
 import com.alphacodes.librarymanagementsystem.util.PasswordUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,14 +24,50 @@ public class UserServiceImpl implements UserService{
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JWTauthentication jwtA;
 
+    private final ResourceRatingRepository resourceRatingRepository;
+    private final ResourceCommentRepository resourceCommentRepository;
+    private final ArticleRatingRepository articleRatingRepository;
+    private final ArticleCommentRepository articleCommentRepository;
+    private final ArticleRepository articleRepository;
+    private final IssueRepository issueRepository;
+    private final FineRepository fineRepository;
+    private final ReservationRepository reservationRepository;
 
-    public UserServiceImpl(UserRepository userRepository ,StudentRepository studentRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JWTauthentication jwtA) {
+//    public UserServiceImpl(UserRepository userRepository ,StudentRepository studentRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JWTauthentication jwtA) {
+//        this.userRepository = userRepository;
+//        this.studentRepository = studentRepository;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+//        this.jwtA = jwtA;
+//    }
+
+    public UserServiceImpl(
+            UserRepository userRepository,
+                           StudentRepository studentRepository,
+                           BCryptPasswordEncoder bCryptPasswordEncoder,
+                           JWTauthentication jwtA,
+                           ResourceRatingRepository resourceRatingRepository,
+                           ResourceCommentRepository resourceCommentRepository,
+                           ArticleRatingRepository articleRatingRepository,
+                           ArticleCommentRepository articleCommentRepository,
+                           ArticleRepository articleRepository,
+                           IssueRepository issueRepository,
+                           FineRepository fineRepository,
+                           ReservationRepository reservationRepository
+    ) {
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtA = jwtA;
-    }
 
+        this.resourceRatingRepository = resourceRatingRepository;
+        this.resourceCommentRepository = resourceCommentRepository;
+        this.articleRatingRepository = articleRatingRepository;
+        this.articleCommentRepository = articleCommentRepository;
+        this.articleRepository = articleRepository;
+        this.issueRepository = issueRepository;
+        this.fineRepository = fineRepository;
+        this.reservationRepository = reservationRepository;
+    }
 
     @Override
     public LoginResponse performLogin(LoginRequest loginRequest) {
@@ -196,6 +232,47 @@ public class UserServiceImpl implements UserService{
         if (user == null) {
             return false;
         }
+
+        // if user avilable
+        // 01. delete the resource comments
+        resourceCommentRepository
+                .findByUser(user)
+                .forEach(resourceCommentRepository::delete);
+        // 02. delete the resource ratings
+        resourceRatingRepository
+                .findByUser(user)
+                .forEach(resourceRatingRepository::delete);
+        // 03. delete the article comments
+        articleCommentRepository
+                .findByUser(user)
+                .forEach(articleCommentRepository::delete);
+
+        // 04. delete the article ratings
+        articleRatingRepository
+                .findByUser(user)
+                .forEach(articleRatingRepository::delete);
+
+        // 05. delete the articles by the user
+        articleRepository
+                .findByAuthor(user)
+                .forEach(articleRepository::delete);
+
+        // 06. delete the fines by the user
+        fineRepository
+                .findByUser(user)
+                .forEach(fineRepository::delete);
+
+        // 07. delete the issues by the user
+        issueRepository
+                .findByUser(user)
+                .forEach(issueRepository::delete);
+
+        // 08. delete the reservations by the user
+        reservationRepository
+                .findByUser(user)
+                .forEach(reservationRepository::delete);
+
+
         userRepository.delete(user);
         return true;
     }

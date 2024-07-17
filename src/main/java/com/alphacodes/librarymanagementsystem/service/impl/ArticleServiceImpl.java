@@ -5,6 +5,7 @@ import com.alphacodes.librarymanagementsystem.DTO.ArticleHomeDto;
 import com.alphacodes.librarymanagementsystem.DTO.ArticleViewDto;
 import com.alphacodes.librarymanagementsystem.Model.Article;
 import com.alphacodes.librarymanagementsystem.Model.User;
+import com.alphacodes.librarymanagementsystem.enums.Role;
 import com.alphacodes.librarymanagementsystem.repository.ArticleCommentRepository;
 import com.alphacodes.librarymanagementsystem.repository.ArticleRatingRepository;
 import com.alphacodes.librarymanagementsystem.repository.ArticleRepository;
@@ -160,7 +161,19 @@ public class ArticleServiceImpl implements ArticleService {
             }  else {
                 // check the user is LIBRARIAN
                 User user = userRepository.findByUserID(userId);
-                if (user.getRole().equals("LIBRARIAN")) {
+                if (user.getRole() == Role.LIBRARIAN) {
+                    //Delete comments and ratings associated with the article
+
+                    //01.Find and Deleted comments associated with the article
+                    articleCommentRepository
+                            .findByArticle(article)
+                            .forEach(articleCommentRepository::delete);
+                    System.out.println("Comments deleted successfully");
+
+                    //02. Find Article Rating and delete it
+                    articleRatingRepository.findByArticle(article)
+                            .forEach(articleRatingRepository::delete);
+
                     articleRepository.deleteById(articleId);
                     return "Article deleted successfully by librarian";
                 }

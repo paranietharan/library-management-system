@@ -10,8 +10,6 @@ public interface FineService {
     public String settleFine(String memberId);
     List<FineDto> getAllUnpaidFine();
     List<FineDto> getFineHistoryByUser(String memberId);
-
     void checkAndUpdateFines();
-
     ResponseEntity<FineDto> getUnpaidFineByUser(String memberId);
 }
