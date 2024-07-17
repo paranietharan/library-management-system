@@ -43,61 +43,64 @@ public class IssueServiceImpl implements IssueService {
         Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
         Optional<User> memberOpt = Optional.ofNullable(userRepository.findByUserID(memberId));
 
-        // before issue resource check if hey need to pay fine or not
-        // if fine is not paid then they can't issue the resource
-        if(fineService.calculateFine(memberId) > 0){
+        if (resourceOpt.isEmpty()) {
+            return "Resource not found.";
+        }
+
+        if (memberOpt.isEmpty()) {
+            return "Member not found.";
+        }
+
+        User member = memberOpt.get();
+
+        // Check if the member needs to pay a fine
+        if (fineService.calculateFine(memberId) > 0) {
             return "Please pay the fine first.";
         }
 
-        // also check if the user already lend a book and not return it
-        Optional<Issue> issueOpt = issueRepository.findNonReturnIssueByUserIdAndResourceId(memberId, resourceId);
-        if(issueOpt.isPresent() && !issueOpt.get().isReturned()){
-            return "You already have this book.";
+        // Check if the member already has an issued book that hasn't been returned
+        Optional<Issue> nonReturnedIssues = issueRepository.findNonReturnIssueByUserId(memberId);
+        if (nonReturnedIssues.isPresent()) {
+            return "You already have a book and haven't returned it yet.";
         }
 
-        if (resourceOpt.isPresent() && memberOpt.isPresent() ) {
-            Resource resource = resourceOpt.get();
-            User member = memberOpt.get();
+        Resource resource = resourceOpt.get();
 
-            // Get resource availability count
-            Integer resourceCount = resource.getNo_of_copies();
+        // Get resource availability count
+        Integer resourceCount = resource.getNo_of_copies();
 
-            // Check resource availability
-            if (resourceCount > 0) {
-                // Decrease the availability count
-                resource.setNo_of_copies(resourceCount - 1);
-                resourceRepository.save(resource);
+        // Check resource availability
+        if (resourceCount > 0) {
+            // Decrease the availability count
+            resource.setNo_of_copies(resourceCount - 1);
+            resourceRepository.save(resource);
 
-                // Create new Issue record
-                Issue issue = new Issue();
-                issue.setBook(resource);
-                issue.setMember(member);
-                issue.setDate(new Date());
-                issue.setReturned(false);
-                issue.setFinePaid(false);
+            // Create new Issue record
+            Issue issue = new Issue();
+            issue.setBook(resource);
+            issue.setMember(member);
+            issue.setDate(new Date());
+            issue.setReturned(false);
+            issue.setFinePaid(false);
 
-                issueRepository.save(issue);
+            issueRepository.save(issue);
 
-                // Create a fine record
-                Fine fine = new Fine();
-                fine.setPaidStatus(false);
-                fine.setAmount(0);
-                fine.setMember(member);
-                fine.setResourceIssueDate(new Date());
-                fine.setIssue(issue);
+            // Create a fine record
+            Fine fine = new Fine();
+            fine.setPaidStatus(false);
+            fine.setAmount(0);
+            fine.setMember(member);
+            fine.setResourceIssueDate(new Date());
+            fine.setIssue(issue);
 
-                // Save the fine record
-                fineRepository.save(fine);
+            // Save the fine record
+            fineRepository.save(fine);
 
-                return "Resource issued successfully.";
-            } else {
-                return "Resource is not available.";
-            }
+            return "Resource issued successfully.";
         } else {
-            return "Resource, Member, or Librarian not found.";
+            return "Resource is not available.";
         }
     }
-
 
     // get Return resources
     @Override
