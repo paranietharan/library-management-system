@@ -1,6 +1,8 @@
 package com.alphacodes.librarymanagementsystem.repository;
 
 import com.alphacodes.librarymanagementsystem.Model.Issue;
+import com.alphacodes.librarymanagementsystem.Model.Resource;
+import com.alphacodes.librarymanagementsystem.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,4 +33,12 @@ public interface IssueRepository extends JpaRepository<Issue, Long>{
     // Custom query to find issue by return type
     @Query("SELECT i FROM Issue i WHERE i.returned = :b")
     List<Issue> findAllByReturned(boolean b);
+
+    // Custom query to find issue by user
+    @Query("SELECT i FROM Issue i WHERE i.member = :user")
+    Iterable<Issue> findByUser(User user);
+
+    // Custom query to find issue by resource
+    @Query("SELECT i FROM Issue i WHERE i.book = :resource")
+    Iterable<Issue> findByResource(Resource resource);
 }
