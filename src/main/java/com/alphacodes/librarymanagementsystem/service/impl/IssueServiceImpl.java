@@ -157,6 +157,8 @@ public class IssueServiceImpl implements IssueService {
                 // Set the issue record as returned
                 issue.setReturned(true);
 
+                issueRepository.save(issue);
+
                 // Send email to the member about the book return
                 emailService.sendSimpleEmail(
                         member.getEmailAddress(),
@@ -167,7 +169,6 @@ public class IssueServiceImpl implements IssueService {
                                 "Thank you,\n" +
                                 "Library Management System"
                 );
-                issueRepository.save(issue);
 
                 return "Resource returned successfully.";
             } else {
