@@ -8,7 +8,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmailServiceImpl {
+public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
@@ -34,8 +34,8 @@ public class EmailServiceImpl {
     public void sendOTP(String to, String otp) {
         sendSimpleEmail(
                 to,
-                "Your OTP Code",
-                "Your OTP code is: " + otp
+                "Your OTP Code for Library Management System Account Verfication",
+                "Your OTP code is: " + otp + ". Use this code to verify your account."
         );
     }
 }

@@ -2,6 +2,7 @@ package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.*;
 //import com.alphacodes.librarymanagementsystem.EmailService.EmailServiceImpl;
+import com.alphacodes.librarymanagementsystem.EmailService.EmailService;
 import com.alphacodes.librarymanagementsystem.JwtAuthenticationConfig.JWTauthentication;
 import com.alphacodes.librarymanagementsystem.Model.Reservation;
 import com.alphacodes.librarymanagementsystem.Model.Student;
@@ -11,6 +12,8 @@ import com.alphacodes.librarymanagementsystem.enums.Role;
 import com.alphacodes.librarymanagementsystem.repository.*;
 import com.alphacodes.librarymanagementsystem.service.UserService;
 import com.alphacodes.librarymanagementsystem.util.PasswordUtil;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,10 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
+
+    @Autowired
+    private EmailService emailService;
+
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -135,10 +142,11 @@ public class UserServiceImpl implements UserService{
     public Boolean sendOtp(String email) {
         System.out.println("Email: " + email);
         OTPServiceImpl otpService = new OTPServiceImpl();
-        //EmailServiceImpl emailService = new EmailServiceImpl();
         String otp = otpService.generateOTP(email);
-        //emailService.sendOTP(email, otp);
         System.out.println("OTP: " + otp);
+
+        // send otp in email
+        emailService.sendOTP(email, otp);
         return true;
     }
 
@@ -226,6 +234,7 @@ public class UserServiceImpl implements UserService{
         return dto;
     }
 
+
     @Override
     public Boolean deleteUserProfile(String id) {
         User user = userRepository.findByUserID(id);
@@ -233,47 +242,57 @@ public class UserServiceImpl implements UserService{
             return false;
         }
 
-        // if user avilable
-        // 01. delete the resource comments
-        resourceCommentRepository
-                .findByUser(user)
-                .forEach(resourceCommentRepository::delete);
-        // 02. delete the resource ratings
-        resourceRatingRepository
-                .findByUser(user)
-                .forEach(resourceRatingRepository::delete);
-        // 03. delete the article comments
-        articleCommentRepository
-                .findByUser(user)
-                .forEach(articleCommentRepository::delete);
+        try {
+            // 01. delete the resource comments
+            resourceCommentRepository
+                    .findByUser(user)
+                    .forEach(resourceCommentRepository::delete);
 
-        // 04. delete the article ratings
-        articleRatingRepository
-                .findByUser(user)
-                .forEach(articleRatingRepository::delete);
+            // 02. delete the resource ratings
+            resourceRatingRepository
+                    .findByUser(user)
+                    .forEach(resourceRatingRepository::delete);
 
-        // 05. delete the articles by the user
-        articleRepository
-                .findByAuthor(user)
-                .forEach(articleRepository::delete);
+            // 03. delete the article comments
+            articleCommentRepository
+                    .findByUser(user)
+                    .forEach(articleCommentRepository::delete);
 
-        // 06. delete the fines by the user
-        fineRepository
-                .findByUser(user)
-                .forEach(fineRepository::delete);
+            // 04. delete the article ratings
+            articleRatingRepository
+                    .findByUser(user)
+                    .forEach(articleRatingRepository::delete);
 
-        // 07. delete the issues by the user
-        issueRepository
-                .findByUser(user)
-                .forEach(issueRepository::delete);
+            // 05. delete the articles by the user
+            articleRepository
+                    .findByAuthor(user)
+                    .forEach(articleRepository::delete);
 
-        // 08. delete the reservations by the user
-        reservationRepository
-                .findByUser(user)
-                .forEach(reservationRepository::delete);
+            // 06. delete the fines by the user
+            fineRepository
+                    .findByUser(user)
+                    .forEach(fineRepository::delete);
 
+            // 07. delete the issues by the user
+            issueRepository
+                    .findByUser(user)
+                    .forEach(issueRepository::delete);
 
-        userRepository.delete(user);
+            // 08. delete the reservations by the user
+            reservationRepository
+                    .findByUser(user.getUserID())
+                    .forEach(reservationRepository::delete);
+
+            // Finally, delete the user
+            userRepository.delete(user);
+
+        } catch (Exception e) {
+            // Log the exception
+            System.err.println("An error occurred while deleting user profile: " + e.getMessage());
+            // Optionally, you could also throw a custom exception or handle it accordingly
+            return false;
+        }
+
         return true;
     }
 
@@ -288,8 +307,19 @@ public class UserServiceImpl implements UserService{
         // check if student exists
         Student student = studentRepository.findByIndexNumber(indexNumber);
 
+        // check student email and phone number
+        if(student != null){
+            if(!student.getEmailAddress().equals(email) || !student.getPhoneNumber().equals(phoneNumber)){
+                return "User details do not match an try again";
+            }
+        }
+
         String password = PasswordUtil.generateStrongPassword();
-        if (student != null) {
+        if (
+                student != null
+                        && student.getEmailAddress().equals(email)
+                        && student.getPhoneNumber().equals(phoneNumber)
+        ) {
             User user = new User();
             user.setFirstName(student.getFirstName());
             user.setLastName(student.getLastName());

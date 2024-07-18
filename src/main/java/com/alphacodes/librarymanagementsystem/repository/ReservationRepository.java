@@ -5,6 +5,7 @@ import com.alphacodes.librarymanagementsystem.Model.Resource;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -29,9 +30,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>{
     @Query("SELECT r FROM Reservation r WHERE r.member.userID = :userId AND (r.status = 'Expired' OR r.status = 'Cancelled')")
     List<Reservation> findPastReservationsByUserId(String userId);
 
-    // custom query to find all reservations by user id
     @Query("SELECT r FROM Reservation r WHERE r.member.userID = :userId")
-    Iterable<Reservation> findByUser(User user);
+    Iterable<Reservation> findByUser(@Param("userId") String userId);
 
     // custom query to find all reservations by resource
     @Query("SELECT r FROM Reservation r WHERE r.book = :resource")
