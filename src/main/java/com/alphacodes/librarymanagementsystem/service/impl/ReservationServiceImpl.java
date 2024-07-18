@@ -1,6 +1,7 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.ReservationDto;
+import com.alphacodes.librarymanagementsystem.EmailService.EmailService;
 import com.alphacodes.librarymanagementsystem.Model.Fine;
 import com.alphacodes.librarymanagementsystem.Model.Reservation;
 import com.alphacodes.librarymanagementsystem.Model.Resource;
@@ -39,6 +40,9 @@ public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private FineRepository fineRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @Transactional
     public String reserveResource(Long resourceId, String userId) {
         logger.info("Attempting to reserve resource with ID {} for user {}", resourceId, userId);
@@ -74,6 +78,18 @@ public class ReservationServiceImpl implements ReservationService {
                     reservationRepository.save(reservation);
 
                     logger.info("Resource {} reserved successfully for user {}", resourceId, userId);
+
+                    // send email to user about successful reservation
+                    emailService
+                            .sendSimpleEmail(
+                                    user.getEmailAddress(),
+                                    "Resource Reserved",
+                                    "You reserve " + resource.getTitle() + " successfully."+
+                                            "Your Reservation ID is: " + reservation.getReservationId() +
+                                            "Your reservation will expire in 24 hours." +
+                                            "Please collect the resource within 24 hours." +
+                                            "\n\nThank you."
+                            );
                     return "Resource reserved successfully for 24 hours.";
                 } else {
                     logger.warn("Resource {} is not available.", resourceId);
@@ -136,6 +152,15 @@ public class ReservationServiceImpl implements ReservationService {
                 reservationRepository.save(reservation);
 
                 logger.info("Reservation {} cancelled successfully.", reservationId);
+
+                // notify user about successful cancellation
+                emailService
+                        .sendSimpleEmail(
+                                reservation.getMember().getEmailAddress(),
+                                "Reservation Cancelled",
+                                "Your reservation for " + resource.getTitle() + " has been cancelled." +
+                                        "\n\nThank you."
+                        );
                 return "Reservation cancelled successfully.";
             } else {
                 logger.warn("Reservation not found for ID {}", reservationId);

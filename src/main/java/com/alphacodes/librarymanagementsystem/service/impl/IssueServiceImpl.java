@@ -1,6 +1,7 @@
 package com.alphacodes.librarymanagementsystem.service.impl;
 
 import com.alphacodes.librarymanagementsystem.DTO.IssueDto;
+import com.alphacodes.librarymanagementsystem.EmailService.EmailService;
 import com.alphacodes.librarymanagementsystem.Model.Fine;
 import com.alphacodes.librarymanagementsystem.Model.Issue;
 import com.alphacodes.librarymanagementsystem.Model.Resource;
@@ -36,6 +37,8 @@ public class IssueServiceImpl implements IssueService {
     @Autowired
     private FineServiceImpl fineService;
 
+    @Autowired
+    private EmailService emailService;
 
     // Function 2 issue resource
     @Override
@@ -96,6 +99,17 @@ public class IssueServiceImpl implements IssueService {
             // Save the fine record
             fineRepository.save(fine);
 
+            // Send email to the member
+            emailService.sendSimpleEmail(
+                    member.getEmailAddress(),
+                    "Resource Issued",
+                    "Hi " + member.getFirstName() + ",\n\n" +
+                            "The resource " + resource.getTitle() + " has been issued to you.\n" +
+                            "Please return the resource within 15 days to avoid any fines.\n\n" +
+                            "Thank you,\n" +
+                            "Library Management System"
+            );
+
             return "Resource issued successfully.";
         } else {
             return "Resource is not available.";
@@ -142,6 +156,17 @@ public class IssueServiceImpl implements IssueService {
 
                 // Set the issue record as returned
                 issue.setReturned(true);
+
+                // Send email to the member about the book return
+                emailService.sendSimpleEmail(
+                        member.getEmailAddress(),
+                        "Resource Returned",
+                        "Hi " + member.getFirstName() + ",\n\n" +
+                                "The resource " + resource.getTitle() + " has been returned successfully.\n" +
+                                "Thank you for returning the resource.\n\n" +
+                                "Thank you,\n" +
+                                "Library Management System"
+                );
                 issueRepository.save(issue);
 
                 return "Resource returned successfully.";

@@ -307,13 +307,6 @@ public class UserServiceImpl implements UserService{
         // check if student exists
         Student student = studentRepository.findByIndexNumber(indexNumber);
 
-        // check student email and phone number
-        if(student != null){
-            if(!student.getEmailAddress().equals(email) || !student.getPhoneNumber().equals(phoneNumber)){
-                return "User details do not match an try again";
-            }
-        }
-
         String password = PasswordUtil.generateStrongPassword();
         if (
                 student != null
@@ -336,6 +329,18 @@ public class UserServiceImpl implements UserService{
                     + "\nEmail Address: " + email
                     + "\nPhone Number: " + phoneNumber
                     + "\nIndex Number: " + indexNumber);
+
+            emailService.sendSimpleEmail(
+                    email,
+                    "Library Management System Account Details",
+                    "Your account has been created successfully by admin. \n\n"
+                            + "Your login details are as follows: \n"
+                            + "User ID: " + indexNumber + "\n"
+                            + "Password: " + password + "\n\n"
+                            + "Please login to your account and change your password."
+                    + "\n\n This is automated email. Please do not reply." +
+                            "\nFor any queries, please contact the library staff."
+            );
             return "User added successfully";
         } else {
             return "User not found in Student Database";

@@ -3,6 +3,7 @@ package com.alphacodes.librarymanagementsystem.service.impl;
 import com.alphacodes.librarymanagementsystem.DTO.ArticleDto;
 import com.alphacodes.librarymanagementsystem.DTO.ArticleHomeDto;
 import com.alphacodes.librarymanagementsystem.DTO.ArticleViewDto;
+import com.alphacodes.librarymanagementsystem.EmailService.EmailService;
 import com.alphacodes.librarymanagementsystem.Model.Article;
 import com.alphacodes.librarymanagementsystem.Model.User;
 import com.alphacodes.librarymanagementsystem.enums.Role;
@@ -12,6 +13,7 @@ import com.alphacodes.librarymanagementsystem.repository.ArticleRepository;
 import com.alphacodes.librarymanagementsystem.repository.UserRepository;
 import com.alphacodes.librarymanagementsystem.service.ArticleService;
 import com.alphacodes.librarymanagementsystem.util.ImageUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,13 +23,15 @@ import java.util.stream.Collectors;
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
+    @Autowired
+    private EmailService emailService;
     private final ArticleRepository articleRepository;
 
     private final UserRepository userRepository;
     private final ArticleCommentRepository articleCommentRepository;
     private final ArticleRatingRepository articleRatingRepository;
 
-    public ArticleServiceImpl(ArticleRepository articleRepository, UserRepository userRepository, ArticleCommentRepository articleCommentRepository, ArticleRatingRepository articleRatingRepository) {
+    public ArticleServiceImpl(ArticleRepository articleRepository, UserRepository userRepository, ArticleCommentRepository articleCommentRepository, ArticleRatingRepository articleRatingRepository, EmailService emailService) {
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
         this.articleCommentRepository = articleCommentRepository;
@@ -128,6 +132,16 @@ public class ArticleServiceImpl implements ArticleService {
             // Save the updated article
             articleRepository.save(updatedArticle);
 
+            // Send email to the author
+            emailService.sendSimpleEmail(
+                    updatedArticle.getAuthor().getEmailAddress(),
+                    "Article Updated",
+                    "Your article has been updated successfully\n" +
+                            "Title: " + updatedArticle.getTitle() + "\n" +
+                            "If you did not make this change, please contact us immediately." +
+                            "\n\nRegards,\nLibrary Management System"
+            );
+
             return mapToArticleDto(updatedArticle);
         } else {
             throw new RuntimeException("Article not found with id " + articleId);
@@ -157,6 +171,17 @@ public class ArticleServiceImpl implements ArticleService {
 
                 // Delete the article
                 articleRepository.deleteById(articleId);
+
+                // send email to the author
+                emailService.sendSimpleEmail(
+                        article.getAuthor().getEmailAddress(),
+                        "Article Deleted",
+                        "Your article has been deleted successfully\n" +
+                                "Title: " + article.getTitle() + "\n" +
+                                "If you did not make this change, please contact us immediately." +
+                                "\n\nRegards,\nLibrary Management System"
+                );
+
                 return "Article deleted successfully";
             }  else {
                 // check the user is LIBRARIAN
@@ -175,6 +200,16 @@ public class ArticleServiceImpl implements ArticleService {
                             .forEach(articleRatingRepository::delete);
 
                     articleRepository.deleteById(articleId);
+
+                    // Notify the author of the deletion by admin
+                    emailService.sendSimpleEmail(
+                            article.getAuthor().getEmailAddress(),
+                            "Article Deleted By Admin",
+                            "Your article has been deleted by the librarian\n" +
+                                    "Title: " + article.getTitle() + "\n" +
+                                    "If you have any additional queries, please contact us immediately." +
+                                    "\n\nRegards,\nLibrary Management System"
+                    );
                     return "Article deleted successfully by librarian";
                 }
 
